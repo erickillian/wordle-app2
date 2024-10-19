@@ -20,6 +20,7 @@ Check out the live demo of the app [here](https://wordle-app2.onrender.com)!
     - [Build](#build)
     - [Run](#run)
   - [Fake Data Population (Testing)](#fake-data-population-testing)
+    - [Create a superuser account for yourself](#create-a-superuser-account-for-yourself)
     - [Creates 100 fake users](#creates-100-fake-users)
     - [Creates 1000 Fake wordles and assigns them to random users](#creates-1000-fake-wordles-and-assigns-them-to-random-users)
   - [Local Development](#local-development)
@@ -46,6 +47,11 @@ cd backend && gunicorn backend.wsgi:application
 
 
 ## Fake Data Population (Testing)
+
+### Create a superuser account for yourself
+```
+python manage.py createsuperuser
+```
 
 ### Creates 100 fake users
 ```
