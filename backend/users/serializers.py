@@ -1,0 +1,93 @@
+from rest_framework import serializers
+from rest_framework_simplejwt.tokens import UntypedToken
+from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
+from django.contrib.auth import get_user_model
+from rest_framework_simplejwt.token_blacklist.models import (
+    OutstandingToken,
+)
+from django.contrib.auth.password_validation import validate_password
+from django.conf import settings
+import requests
+
+
+User = get_user_model()
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["slug", "display_name", "profile_picture"]
+
+
+class UserSelfSerializer(serializers.ModelSerializer):
+    full_name = serializers.CharField(max_length=100, allow_blank=True, required=False)
+    email = serializers.EmailField(allow_blank=False, required=False, read_only=True)
+    profile_picture = serializers.ChoiceField(choices=User.PROFILE_PICTURES, allow_blank=False, required=False)
+
+    class Meta:
+        model = User
+        fields = ["slug", "email", "full_name", "date_joined", "color_mode", "profile_picture"]
+        read_only_fields = ["email", "date_joined", "slug"]
+
+
+class UserLoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = User
+        fields = ("email", "password")
+
+
+class UserRegistrationSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
+    hcaptcha = serializers.CharField(write_only=True, required=True)
+
+    class Meta:
+        model = User
+        fields = ["email", "password", "hcaptcha"]
+
+    def validate_hcaptcha(self, value):
+        if not settings.HCAPTCHA_SECRET:
+            return value
+
+        response = requests.post(
+            "https://api.hcaptcha.com/siteverify",
+            data={
+                "secret": settings.HCAPTCHA_SECRET,
+                "response": value,
+            },
+        )
+        if not response.json()["success"]:
+            raise serializers.ValidationError("Invalid hCaptcha")
+        return value
+
+    def validate_email(self, value):
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("Email already in use")
+        return value
+
+    def validate_password(self, value):
+        validate_password(value)
+        return value
+
+    def create(self, validated_data):
+        email = validated_data["email"]
+        password = validated_data["password"]
+        user = User.objects.create_user(email=email, password=password)
+        return user
+
+
+class TokenRefreshSerializer(serializers.Serializer):
+    refresh = serializers.CharField()
+
+
+class UserSessionSerializer(serializers.ModelSerializer):
+    ip_address = serializers.CharField(source="metadata.ip_address", default="N/A")
+    location = serializers.CharField(source="metadata.location", default="Unknown Location")
+    device = serializers.CharField(source="metadata.device", default="Unknown Device")
+
+    class Meta:
+        model = OutstandingToken
+        fields = ["created_at", "expires_at", "ip_address", "location", "device"]
