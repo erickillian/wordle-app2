@@ -69,8 +69,7 @@
 
             <template v-slot:[`item.start_time`]="{ item }">
                 <v-list-item-title>
-                    {{ new Date(item.start_time).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day:
-                    'numeric' }) }}
+                    {{ new Date(item.start_time).toLocaleDateString('en-US', { timeZone: 'UTC', year: 'numeric', month: 'long', day: 'numeric' }) }}
                 </v-list-item-title>
             </template>
 
