@@ -15,7 +15,6 @@ from django.views.decorators.cache import cache_page
 import requests
 from django.utils.timezone import datetime
 
-
 # Helper function to get the client IP address
 def get_client_ip(request):
     x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
@@ -28,13 +27,22 @@ def get_client_ip(request):
     return ip
 
 
-# Helper function to get location from IP address (optional)
+# Helper function to get location from IP address
 def get_location_from_ip(ip):
     try:
-        # Call a third-party service like ipstack, or use a service of your choice
         response = requests.get(f"https://ipinfo.io/{ip}/json")
-        return response.json().get("city", "Unknown Location")
-    except Exception:
+        response.raise_for_status()  # Raise an HTTPError for bad responses
+        data = response.json()
+        
+        city = data.get("city", "Unknown City")
+        region = data.get("region", "Unknown Region")
+        country = data.get("country", "Unknown Country")
+        loc = data.get("loc", "Unknown Location")  # Latitude and Longitude
+        
+        return f"{city}, {region}, {country}, {loc}"
+    except requests.exceptions.RequestException as e:
+        return "Unknown Location"
+    except ValueError as e:
         return "Unknown Location"
 
 

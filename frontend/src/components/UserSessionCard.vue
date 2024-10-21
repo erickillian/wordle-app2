@@ -2,14 +2,14 @@
     <div class="user-session-card">
         <v-card class="mb-5">
             <v-card-title class="py-4 font-weight-bold">
-                Active Sessions
+                Sessions
             </v-card-title>
             <v-divider></v-divider>
             <v-card-text class="pa-6">
                 <v-row>
                     <v-col cols="12">
                         <!-- Check if userSessions exist -->
-                        <v-list v-if="userSessions.length" class="sessions-list">
+                        <v-list v-if="!userSessionsLoading" class="sessions-list">
                             <v-list-item v-for="session in userSessions" :key="session.id" class="session-item"
                                 :class="{ 'session-item-sm': $vuetify.display.smAndDown }">
                                 <template v-slot:prepend>
@@ -45,7 +45,7 @@
                         </v-list>
 
                         <!-- Show skeleton loader when loading -->
-                        <v-skeleton-loader v-else :loading="userSessionsLoading" type="list-item"></v-skeleton-loader>
+                        <v-skeleton-loader v-else :loading="userSessionsLoading" type="list-item" />
                     </v-col>
                 </v-row>
             </v-card-text>
