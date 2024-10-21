@@ -1,7 +1,7 @@
 **/env/
 *.sqlite3
 *.pyc
-**/migrations/*
-!**/migrations/__init__.py
+# **/migrations/*
+# !**/migrations/__init__.py
 /backend/media/
 /backend/static/

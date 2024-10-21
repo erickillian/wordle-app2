@@ -9,7 +9,6 @@ from django.db import models
 from django.conf import settings
 import uuid
 import random
-from rest_framework_simplejwt.tokens import OutstandingToken
 
 
 class CustomUserManager(BaseUserManager):
@@ -128,7 +127,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class TokenMetadata(models.Model):
     token = models.OneToOneField(
-        OutstandingToken, on_delete=models.CASCADE, related_name="metadata"
+        'token_blacklist.OutstandingToken', on_delete=models.CASCADE, related_name="metadata"
     )
     ip_address = models.GenericIPAddressField()
     location = models.CharField(max_length=255, blank=True, null=False, default="Unknown Location")
