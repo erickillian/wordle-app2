@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia';
 import { login as apiLogin, register as apiRegister, refresh as apiRefresh, getUserInfo, editUserInfo, logout } from '../api/auth';
-// import { useTheme } from 'vuetify';
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
@@ -16,6 +15,7 @@ export const useAuthStore = defineStore('auth', {
         login_error: null,
         accessToken: "",
         refreshToken: "",
+        refreshTokenCreatedAt: "",
         apiRequestLoading: false,
     }),
     actions: {
@@ -46,6 +46,7 @@ export const useAuthStore = defineStore('auth', {
                 const response = await apiLogin(email, password);
                 this.accessToken = response.data.access;
                 this.refreshToken = response.data.refresh;
+                this.refreshTokenCreatedAt = response.data.created_at;
                 this.user = response.data.user;
             } catch (error) {
                 throw error;
@@ -56,6 +57,7 @@ export const useAuthStore = defineStore('auth', {
                 const response = await apiRegister(email, password, hcaptcha);
                 this.accessToken = response.data.access;
                 this.refreshToken = response.data.refresh;
+                this.refreshTokenCreatedAt = response.data.created_at;
                 this.user = response.data.user;
             } catch (error) {
                 throw error;

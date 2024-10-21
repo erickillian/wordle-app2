@@ -13,8 +13,10 @@
                             <v-list-item v-for="session in userSessions" :key="session.id" class="session-item"
                                 :class="{ 'session-item-sm': $vuetify.display.smAndDown }">
                                 <template v-slot:prepend>
-                                    <v-avatar color="grey-lighten-1">
-                                        <v-icon color="white">mdi-key</v-icon>
+                                    <v-avatar :color="session.created_at === currTokenCreatedAt ? 'primary' : 'grey-lighten-1'">
+                                        <v-icon color="white">
+                                            mdi-key
+                                        </v-icon>
                                     </v-avatar>
                                 </template>
                                 <v-list-item-title class="font-weight-bold text-h6">
@@ -36,7 +38,7 @@
                                         <strong>Location:</strong> {{ session.location }}
                                     </div>
                                 </v-list-item-subtitle>
-                                <template v-slot:append>
+                                <template v-slot:append v-if="session.created_at !== currTokenCreatedAt">
                                     <v-btn icon @click="handleRemoveSession(session.created_at)" elevation="0">
                                         <v-icon>mdi-close</v-icon>
                                     </v-btn>
@@ -62,6 +64,7 @@
 <script>
 import { ref, onMounted, watch } from 'vue';
 import { getUserSessions, removeSession as apiRemoveSession } from '@/api/auth'; // Renamed import
+import { useAuthStore } from '@/stores/auth';
 
 export default {
     name: 'UserSessionCard',
@@ -76,6 +79,8 @@ export default {
             has_prev: false,
         });
         const userSessionsLoading = ref(false);
+        const currTokenCreatedAt = useAuthStore().refreshTokenCreatedAt;
+        console.log(currTokenCreatedAt);
 
         // Fetch the sessions from the API
         const fetchActiveTokens = async (currentPage = 1) => {
@@ -130,6 +135,7 @@ export default {
             userSessionsLoading,
             paginate,
             handleRemoveSession, // Updated to reflect new method name
+            currTokenCreatedAt,
         };
     },
 };

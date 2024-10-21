@@ -149,7 +149,7 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "django-insecure-+o9x0)bf!k*jq74@otp
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10),  # Access tokens last 10 minutes
     "REFRESH_TOKEN_LIFETIME": timedelta(days=365),  # Refresh tokens last 1 year
-    "ROTATE_REFRESH_TOKENS": False,
+    "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,  # This ensures that the token is blacklisted after rotation
     "UPDATE_LAST_LOGIN": False,
     "ALGORITHM": "HS256",

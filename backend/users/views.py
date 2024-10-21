@@ -34,15 +34,23 @@ def get_location_from_ip(ip):
         response.raise_for_status()  # Raise an HTTPError for bad responses
         data = response.json()
         
-        city = data.get("city", "Unknown City")
-        region = data.get("region", "Unknown Region")
-        country = data.get("country", "Unknown Country")
-        loc = data.get("loc", "Unknown Location")  # Latitude and Longitude
+        location_parts = []
+        if "city" in data:
+            location_parts.append(data["city"])
+        if "region" in data:
+            location_parts.append(data["region"])
+        if "country" in data:
+            location_parts.append(data["country"])
+        if "loc" in data:
+            location_parts.append(data["loc"])  # Latitude and Longitude
         
-        return f"{city}, {region}, {country}, {loc}"
-    except requests.exceptions.RequestException as e:
+        if location_parts:
+            return ", ".join(location_parts)
+        else:
+            return "Unknown Location"
+    except requests.exceptions.RequestException:
         return "Unknown Location"
-    except ValueError as e:
+    except ValueError:
         return "Unknown Location"
 
 
@@ -89,6 +97,7 @@ class UserLogin(APIView):
             {
                 "refresh": str(refresh),
                 "access": access_token,
+                "created_at": outstanding_token.created_at,
                 "user": UserSelfSerializer(user).data,
             },
             status=status.HTTP_201_CREATED,
@@ -190,6 +199,7 @@ class RegisterUserView(APIView):
                 {
                     "refresh": str(refresh),
                     "access": access_token,
+                    "created_at": outstanding_token.created_at,
                     "user": UserSelfSerializer(user).data,
                 },
                 status=status.HTTP_201_CREATED,
@@ -249,7 +259,6 @@ class UserSessionListView(generics.ListAPIView):
         ).exclude(
             blacklistedtoken__isnull=False
         ).order_by('-created_at')
-
 
 class LargerResultsSetPagination(StandardResultsSetPagination):
     page_size = 20  # Set the pagination size to be larger

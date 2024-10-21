@@ -5,7 +5,7 @@
                 <v-card-title>Select Profile Picture</v-card-title>
                 <v-card-text>
                     <v-row>
-                        <v-col v-for="(image, index) in imageOptions" :key="index" cols="12" sm="4" md="3" lg="2">
+                        <v-col v-for="(image, index) in imageOptions" :key="index" cols="12" sm="6" md="4" lg="3">
                             <v-hover v-slot="{ isHovering, props }">
                                 <v-img :src="getProfilePictureUrl(image)" width="128" height="128" v-bind="props"
                                     class="mx-auto">
