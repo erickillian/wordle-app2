@@ -253,7 +253,8 @@ class UserSessionListView(generics.ListAPIView):
 
     def get_queryset(self):
         return OutstandingToken.objects.filter(
-            user=self.request.user
+            user=self.request.user,
+            expires_at__gt=datetime.now()
         ).exclude(
             blacklistedtoken__isnull=False
         ).order_by('-created_at')
