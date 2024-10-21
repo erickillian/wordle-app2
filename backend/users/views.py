@@ -41,8 +41,6 @@ def get_location_from_ip(ip):
             location_parts.append(data["region"])
         if "country" in data:
             location_parts.append(data["country"])
-        if "loc" in data:
-            location_parts.append(data["loc"])  # Latitude and Longitude
         
         if location_parts:
             return ", ".join(location_parts)
