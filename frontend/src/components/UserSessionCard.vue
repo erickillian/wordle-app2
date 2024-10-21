@@ -12,46 +12,35 @@
                         <v-list v-if="userSessions.length" class="sessions-list">
                             <v-list-item v-for="session in userSessions" :key="session.id" class="session-item"
                                 :class="{ 'session-item-sm': $vuetify.display.smAndDown }">
-                                <v-row justify="space-between" class="mb-4">
-                                    <v-col cols="12" md="6">
-                                        <v-list-item-title class="font-weight-bold text-h6">
-                                            {{ session.device }}
-                                        </v-list-item-title>
-                                    </v-col>
-
-                                    <v-col cols="12" md="6">
-                                        <v-list-item-action class="d-flex align-center justify-space-between">
-                                            <div>
-                                                <strong>Created:</strong> {{ new
-                                                Date(session.created_at).toLocaleString() }}
-                                            </div>
-                                            <div>
-                                                <strong>Expires:</strong> {{ new
-                                                Date(session.expires_at).toLocaleString() }}
-                                            </div>
-                                        </v-list-item-action>
-                                    </v-col>
-                                </v-row>
-
-                                <v-row justify="space-between">
-                                    <v-col cols="12" md="6">
-                                        <div>
-                                            <strong>IP Address:</strong> {{ session.ip_address }}
-                                        </div>
-                                    </v-col>
-                                    <v-col cols="12" md="6">
-                                        <div>
-                                            <strong>Location:</strong> {{ session.location }}
-                                        </div>
-                                    </v-col>
-                                    <v-col cols="12" class="d-flex justify-end">
-                                        <v-btn icon @click="handleRemoveSession(session.created_at)" elevation="0">
-                                            <v-icon color="error">mdi-close</v-icon>
-                                        </v-btn>
-                                    </v-col>
-                                </v-row>
-
-                                <v-divider class="my-4"></v-divider>
+                                <template v-slot:prepend>
+                                    <v-avatar color="grey-lighten-1">
+                                        <v-icon color="white">mdi-key</v-icon>
+                                    </v-avatar>
+                                </template>
+                                <v-list-item-title class="font-weight-bold text-h6">
+                                    {{ session.device }}
+                                </v-list-item-title>
+                                <v-list-item-subtitle class="d-flex flex-wrap">
+                                    <div class="mr-2">
+                                        <strong>Created:</strong> {{ new Date(session.created_at).toLocaleString() }}
+                                    </div>
+                                    <div>
+                                        <strong>Expires:</strong> {{ new Date(session.expires_at).toLocaleString() }}
+                                    </div>
+                                </v-list-item-subtitle>
+                                <v-list-item-subtitle class="d-flex flex-wrap">
+                                    <div class="mr-2">
+                                        <strong>IP:</strong> {{ session.ip_address }}
+                                    </div>
+                                    <div>
+                                        <strong>Location:</strong> {{ session.location }}
+                                    </div>
+                                </v-list-item-subtitle>
+                                <template v-slot:append>
+                                    <v-btn icon @click="handleRemoveSession(session.created_at)" elevation="0">
+                                        <v-icon>mdi-close</v-icon>
+                                    </v-btn>
+                                </template>
                             </v-list-item>
                         </v-list>
 
