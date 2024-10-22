@@ -30,7 +30,7 @@ export default defineComponent({
         const barGraphData = computed(() => ({
             labels: props.keys,
             datasets: [{
-                label: 'Number of guesses',
+                label: 'Number of wordles',
                 backgroundColor: theme.current.value.colors.primary,
                 data: props.values,
             }]
@@ -39,15 +39,15 @@ export default defineComponent({
         const barGraphOptions = {
             responsive: true,
             maintainAspectRatio: false,
-            // animation: {
-            //     duration: 0 // Disable animation
-            // },
+            animation: {
+                duration: 400 // Disable animation
+            },
             plugins: {
-            legend: { display: false }
+                legend: { display: false }
             },
             scales: {
-            x: { grid: { display: false } },
-            y: { grid: { display: false } }
+                x: { grid: { display: false } },
+                y: { grid: { display: false } }
             }
         };
 

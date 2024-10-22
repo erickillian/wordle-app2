@@ -62,6 +62,17 @@ const internalRoutes = [
                 meta: { requiresAuth: true },
                 props: (route: { params: { slug: string } }) => ({ slug: route.params.slug }), // Pass slug as a prop
             },
+            {
+                path: 'words',
+                component: () => import('@/pages/WordPage.vue'), // Word page
+                meta: { requiresAuth: true },
+            },
+            {
+                path: 'words/:word',
+                component: () => import('@/pages/WordPage.vue'), // Word page with word parameter
+                meta: { requiresAuth: true },
+                props: (route: { params: { word: string } }) => ({ word: route.params.word }), // Pass word as a prop
+            },
             // Add more internal pages here
         ],
     },

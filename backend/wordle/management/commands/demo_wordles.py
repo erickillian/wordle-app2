@@ -70,12 +70,12 @@ class Command(BaseCommand):
             user = random.choice(users)
             word = random.choice(words)
             while True:
-                start_time = timezone.now() - datetime.timedelta(days=random.randint(0, 20))
+                start_time = timezone.now() - datetime.timedelta(days=random.randint(0, 100))
                 time = datetime.timedelta(minutes=random.randint(1, 15), seconds=random.randint(0, 59), microseconds=random.randint(0, 999999))  # random time between 1 and 15 minutes with decimal component
 
                 if not Wordle.objects.filter(start_time__date=start_time.date(), user=user).exists():
                     break
-            
+
             if solved:
                 guesses = max(1, min(WORDLE_NUM_GUESSES, round(random.normalvariate(average_guesses, guesses_stddev))))
                 guess_history = "".join(
@@ -103,9 +103,16 @@ class Command(BaseCommand):
             # Verify that the start_time was saved correctly
             saved_wordle = Wordle.objects.get(id=wordle.id)
             if saved_wordle.start_time != start_time:
-                self.stdout.write(self.style.ERROR(f"Error: start_time for Wordle ID {wordle.id} was not saved correctly."))
+                self.stdout.write(
+                    self.style.ERROR(
+                        f"Error: start_time for Wordle ID {wordle.id} was not saved correctly."
+                    )
+                )
             else:
-                self.stdout.write(self.style.SUCCESS(f"Wordle ID {wordle.id} created successfully with start_time {saved_wordle.start_time}."))
-
+                self.stdout.write(
+                    self.style.SUCCESS(
+                        f"Wordle ID {saved_wordle.id} created successfully with start_time {saved_wordle.start_time}."
+                    )
+                )
 
         return

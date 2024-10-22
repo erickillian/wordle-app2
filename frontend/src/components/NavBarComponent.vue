@@ -53,11 +53,12 @@ export default defineComponent({
 
     // Menu items with icons and links
     const menuItems = [
-      { text: 'Dashboard', icon: 'mdi-view-dashboard', link: '/dashboard' },
-      { text: 'Users', icon: 'mdi-account-group', link: '/users' },
-      { text: 'Wordle', icon: 'mdi-alpha-w-box-outline', link: '/wordle' },
-      { text: 'Profile', icon: 'mdi-account', link: '/profile' },
-      { text: 'Logout', icon: 'mdi-logout', link: '/logout' },
+        { text: 'Dashboard', icon: 'mdi-view-dashboard', link: '/dashboard' },
+        { text: 'Users', icon: 'mdi-account-group', link: '/users' },
+        { text: 'Wordle', icon: 'mdi-alpha-w-box-outline', link: '/wordle' },
+        { text: 'Dictionary', icon: 'mdi-book-open-page-variant', link: '/words' },
+        { text: 'Profile', icon: 'mdi-account', link: '/profile' },
+        { text: 'Logout', icon: 'mdi-logout', link: '/logout' },
     ];
 
     // watch the auth store for apiRequestLoading and update the isLoading ref

@@ -14,6 +14,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 import requests
 from django.utils.timezone import datetime
+from backend.pagination import LargerResultsSetPagination
 
 # Helper function to get the client IP address
 def get_client_ip(request):
@@ -258,10 +259,6 @@ class UserSessionListView(generics.ListAPIView):
         ).exclude(
             blacklistedtoken__isnull=False
         ).order_by('-created_at')
-
-class LargerResultsSetPagination(StandardResultsSetPagination):
-    page_size = 20  # Set the pagination size to be larger
-
 
 class UserListView(generics.ListAPIView):
     queryset = User.objects.all()

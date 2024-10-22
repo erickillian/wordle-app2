@@ -3,9 +3,8 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page, never_cache
 from django.forms.models import model_to_dict
 from django.db.models import Avg, Count
-from django.db.models.expressions import Window
 from django.db.models.functions import RowNumber
-from django.db.models import F, Q, Sum, Case, When, IntegerField, Min, Value, CharField
+from django.db.models import F, Q, Sum, Case, When, IntegerField, Min, Value, CharField, Window, Subquery, OuterRef
 
 
 from rest_framework.permissions import IsAuthenticated
@@ -31,6 +30,8 @@ from backend.settings import BASE_DIR
 from rest_framework import generics
 from backend.pagination import StandardResultsSetPagination
 from django.db import transaction
+from backend.pagination import LargerResultsSetPagination
+
 
 wordle_target_words = json.load(
     open(os.path.join(BASE_DIR, "wordle/data/targetWords.json"))
@@ -304,20 +305,6 @@ class UserWordleStatsView(APIView):
 
         solved_percentage = (solved_wordles / total_wordles) * 100 if total_wordles > 0 else 0.0
 
-        # Calculate number of gold, silver, and bronze medals
-        wordles_with_medals = Wordle.objects.filter(solved=True, active=False).annotate(
-            rank=Window(
-            expression=RowNumber(),
-            partition_by=F("start_time__date"),
-            order_by=[F("guesses").asc(), F("time").asc()],
-            ),
-        )
-
-        gold_medals = wordles_with_medals.filter(rank=1, user=user).count()
-        silver_medals = wordles_with_medals.filter(rank=2, user=user).count()
-        bronze_medals = wordles_with_medals.filter(rank=3, user=user).count()
-        points = gold_medals * 3 + silver_medals * 2 + bronze_medals
-
         # Calculate guess distribution
         guess_distribution = (
             Wordle.objects.filter(user=user, active=False, solved=True)
@@ -328,6 +315,8 @@ class UserWordleStatsView(APIView):
 
         guess_distribution = {item["guesses"]: item["count"] for item in guess_distribution}
         guess_distribution = {i: guess_distribution.get(i, 0) for i in range(1, WORDLE_NUM_GUESSES + 1)}
+        guess_distribution['Fails'] = Wordle.objects.filter(user=user, active=False, solved=False).count()
+
         user_data = UserSerializer(user).data
 
         response = {
@@ -338,13 +327,139 @@ class UserWordleStatsView(APIView):
                 "solved_percentage": solved_percentage,
                 "avg_time": time["time__avg"],
                 "guess_distribution": guess_distribution,
-                "gold_medals": gold_medals,
-                "silver_medals": silver_medals,
-                "bronze_medals": bronze_medals,
-                "points": points,
             },
         }
         return Response(response)
+
+
+class WordleStats(APIView):
+    """
+    This view returns a bunch of Wordle stats
+    """
+    # permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        stats = [
+            self.total_wordles().data,
+            self.most_wordles().data,
+            self.wordle_avg_time().data,
+            self.wordle_avg_guesses().data,
+            self.best_word_wordle_guesses().data,
+            self.best_profile_pic_average_guesses().data,
+            self.best_profile_pic_average_time().data,
+        ]
+        return Response(stats)
+
+    def total_wordles(self):
+        total_wordles = Wordle.objects.filter(active=False, solved=True).count()
+        return Response(
+            {
+                "stat_name": "Total Wordles Solved",
+                "data": str(total_wordles),
+            }
+        )
+
+    def wordle_avg_time(self):
+        time = Wordle.objects.filter(active=False, solved=True).aggregate(Avg("time"))
+        avg_time = time["time__avg"]
+        formatted_time = str(datetime.timedelta(seconds=avg_time.total_seconds())) if avg_time else "N/A"
+        return Response(
+            {
+            "stat_name": "Wordle Average Time",
+            "data": formatted_time,
+            }
+        )
+
+    def wordle_avg_guesses(self):
+        guesses = Wordle.objects.filter(active=False, solved=True).aggregate(Avg("guesses"))
+        return Response(
+            {
+                "stat_name": "Wordle Average Guesses",
+                "data": str(guesses["guesses__avg"]),
+            }
+        )
+
+
+    def best_word_wordle_guesses(self):
+        # Group Wordles by 'word' and calculate the average guesses per word
+        word_stats = (
+            Wordle.objects.filter(active=False, solved=True)
+            .values("word")
+            .annotate(
+                average_guesses=Avg("guesses")
+            )
+            .order_by("average_guesses")
+            .first()
+        )
+
+        if word_stats:
+            return Response(
+                {
+                    "stat_name": "Best Word Average Guesses",
+                    "word": word_stats["word"],
+                    "average_guesses": str(
+                        word_stats["average_guesses"]
+                    ),
+                }
+            )
+
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    def most_wordles(self):
+        user = User.objects.annotate(
+            total_wordles=Count("wordle", filter=Q(wordle__active=False))
+        ).order_by("-total_wordles").first()
+        if user:
+            return Response(
+                {
+                    "stat_name": "Most Wordles Solved",
+                    "user": UserSerializer(user).data,
+                    "data": str(user.total_wordles),
+                }
+            )
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    def best_profile_pic_average_guesses(self):
+        user_profile_pics = (
+            User.objects.filter(wordle__active=False)
+            .values("profile_picture")
+            .annotate(avg_guesses=Avg("wordle__guesses"))
+            .order_by("avg_guesses")
+        )
+
+        if user_profile_pics.exists():
+            best_profile_pic = user_profile_pics.first()
+            profile_picture= best_profile_pic["profile_picture"]
+            avg_guesses = best_profile_pic["avg_guesses"]
+            return Response(
+                {
+                    "stat_name": "Best Average Guesses Animal",
+                    "profile_picture": profile_picture,
+                    "data": str(avg_guesses),
+                }
+            )
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    def best_profile_pic_average_time(self):
+        user_profile_pics = (
+            User.objects.filter(wordle__active=False)
+            .values("profile_picture")
+            .annotate(avg_time=Avg("wordle__time"))
+            .order_by("avg_time")
+        )
+
+        if user_profile_pics.exists():
+            best_profile_pic = user_profile_pics.first()
+            profile_picture = best_profile_pic["profile_picture"]
+            avg_time = best_profile_pic["avg_time"]
+            return Response(
+                {
+                    "stat_name": "Best Average Time Animal",
+                    "profile_picture": profile_picture,
+                    "data": str(avg_time),
+                }
+            )
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 class WordlesToday(generics.ListAPIView):
@@ -387,36 +502,11 @@ class WordleLeadersGuesses(APIView):
         serializer = UserWordleSerializer(queryset, many=True)
         return Response(serializer.data)
 
-class WordleStats(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        num_wordles = Wordle.objects.filter(active=False).count()
-        num_users = User.objects.filter().count()
-        num_guesses = Wordle.objects.filter(active=False).aggregate(Sum("guesses"))["guesses__sum"]
-        avg_guesses_per_wordle = Wordle.objects.filter(active=False).aggregate(Avg("guesses"))["guesses__avg"]
-        avg_time_to_solve = Wordle.objects.filter(solved=True, active=False).aggregate(Avg("time"))["time__avg"]
-        num_solved_wordles = Wordle.objects.filter(solved=True, active=False).count()
-        # longest_streak = max(wordle_streak(user) for user in User.objects.all())
-
-        response = {
-            "num_wordles": num_wordles,
-            "num_users": num_users,
-            "total_guesses": num_guesses,
-            "avg_guesses_per_wordle": avg_guesses_per_wordle,
-            "avg_time_to_solve": avg_time_to_solve,
-            "num_solved_wordles": num_solved_wordles,
-            # "longest_streak": longest_streak,
-        }
-        return Response(response)
-
 
 class WordleWallOfShame(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = WordleSerializer
     pagination_class = StandardResultsSetPagination
-    search_fields = ["user__email", "user__full_name"]
-    filter_backends = [SearchFilter]
 
     def get_queryset(self):
         return Wordle.objects.filter(solved=False, active=False).order_by("-time")
@@ -426,8 +516,6 @@ class WordleWallOfFame(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = WordleSerializer
     pagination_class = StandardResultsSetPagination
-    search_fields = ["user__email", "user__full_name"]
-    filter_backends = [SearchFilter]
 
     def get_queryset(self):
         return Wordle.objects.filter(solved=True, active=False, guesses=1)
@@ -470,3 +558,78 @@ class WordleLeadersMedal(APIView):
         ).order_by("-gold_medals", "-total_points")[:5]
 
         return Response(UserWordleSerializer(user_medals, many=True).data)
+
+
+class WordViewSet(viewsets.GenericViewSet):
+    """
+    A simple ViewSet for listing or retrieving Words with their guess distribution.
+    """
+    # permission_classes = [IsAuthenticated]
+    search_fields = ["word"]
+    filter_backends = [SearchFilter]
+    pagination_class = LargerResultsSetPagination
+
+    def get_queryset(self):
+        return Wordle.objects.values("word").annotate(
+            total_wordles=Count("id"),
+        ).order_by("word")
+
+    def list(self, request):
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)  # Paginate the queryset
+        serializer = WordListSerializer(page, many=True)
+        return self.get_paginated_response(serializer.data)
+
+    def retrieve(self, request, word=None):
+        queryset = Wordle.objects.filter(word=word).values("word").annotate(
+            total_wordles=Count("id"),
+        )
+        wordle = get_object_or_404(queryset, word=word)
+
+        # Calculate guess distribution
+        guess_distribution = (
+            Wordle.objects.filter(word=word, active=False, solved=True)
+            .values("guesses")
+            .annotate(count=Count("guesses"))
+            .order_by("guesses")
+        )
+
+        guess_distribution = {item["guesses"]: item["count"] for item in guess_distribution}
+        guess_distribution = {i: guess_distribution.get(i, 0) for i in range(1, WORDLE_NUM_GUESSES + 1)}
+        guess_distribution['Fails'] = Wordle.objects.filter(word=word, active=False, solved=False).count()
+
+        # Calculate average guesses
+        guesses = Wordle.objects.filter(word=word, active=False).aggregate(Avg("guesses"))
+
+        # Calculate total wordles
+        total_wordles = Wordle.objects.filter(word=word, active=False).count()
+
+        # Calculate average time to solve
+        time = Wordle.objects.filter(word=word, active=False).aggregate(Avg("time"))
+
+        # Calculate number of solved wordles
+        solved_wordles = Wordle.objects.filter(word=word, active=False, solved=True).count()
+
+        solved_percentage = (solved_wordles / total_wordles) * 100 if total_wordles > 0 else 0.0
+
+        wordle_data = WordSerializer(wordle).data
+        wordle_data["guess_distribution"] = guess_distribution
+        wordle_data["stats"] = {
+            "avg_guesses": guesses["guesses__avg"],
+            "avg_time": time["time__avg"],
+            "total_wordles": total_wordles,
+            "solved_percentage": solved_percentage,
+        }
+
+        return Response(wordle_data)
+
+class WordWordleListView(generics.ListAPIView):
+    """
+    A view for listing Wordles for a specific word.
+    """
+    # permission_classes = [IsAuthenticated]
+    serializer_class = WordleSerializer
+    pagination_class = StandardResultsSetPagination
+
+    def get_queryset(self):
+        return Wordle.objects.filter(word=self.kwargs["word"], active=False).order_by("-start_time")

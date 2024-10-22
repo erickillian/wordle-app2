@@ -19,3 +19,7 @@ class StandardResultsSetPagination(PageNumberPagination):
                 },
             }
         )
+
+
+class LargerResultsSetPagination(StandardResultsSetPagination):
+    page_size = 20  # Set the pagination size to be larger

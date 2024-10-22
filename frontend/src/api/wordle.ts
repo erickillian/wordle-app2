@@ -47,3 +47,15 @@ export const userWordles = async (slug: string, page: number) => {
 export const userWordleStats = async (slug: string) => {
     return api.get(`/api/v1/wordle/user/${slug}/stats`, {});
 };
+
+export const words = async (search: string, page: number) => {
+    return api.get('/api/v1/wordle/words', { params: { search, page } });
+};
+
+export const word = async (word: string) => {
+    return api.get(`/api/v1/wordle/words/${word}`, {});
+};
+
+export const wordWordles = async (word: string, page: number) => {
+    return api.get(`/api/v1/wordle/words/${word}/wordles`, { params: { page }});
+};

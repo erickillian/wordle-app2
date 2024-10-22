@@ -117,3 +117,23 @@ class UserWordleSerializer(serializers.ModelSerializer):
             "total_medals",
             "total_points",
         ]
+
+
+class WordListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Wordle
+        fields = ["word"]
+
+
+
+class WordSerializer(serializers.ModelSerializer):
+    definition = serializers.SerializerMethodField(method_name="get_definition", read_only=True)
+    guess_distribution = serializers.JSONField(read_only=True, required=False)
+
+    def get_definition(self, obj):
+        print(obj, flush=True)
+        return word_definitions.get(obj['word'], "")
+
+    class Meta:
+        model = Wordle
+        fields = ["word", "definition", "guess_distribution"]
