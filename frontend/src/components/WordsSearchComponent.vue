@@ -34,7 +34,7 @@
     </v-card>
 </template>
 
-<script lang="ts">
+<script>
 import { defineComponent } from "vue";
 import { usePaginatedSearch } from "@/composables/usePaginatedSearch";
 import { words as fetchWords } from "@/api/wordle";

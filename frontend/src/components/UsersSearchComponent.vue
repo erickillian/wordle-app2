@@ -34,10 +34,9 @@
     </v-card>
 </template>
 
-<script lang="ts">
+<script>
 import { defineComponent } from "vue";
 import { fetchUsers } from "@/api/users";
-import { User } from "@/types/index";
 import { usePaginatedSearch } from "@/composables/usePaginatedSearch";
 
 export default defineComponent({
@@ -57,7 +56,7 @@ export default defineComponent({
         const { searchQuery, items, loading, error, page, onPageUpdate } = usePaginatedSearch<User>(fetchUsers);
 
         // Select user and notify parent component
-        const selectUser = (item: User) => {
+        const selectUser = (item) => {
             const user_slug = item.slug;
             const newSlug = (props.selectedUserSlug === user_slug) ? '' : user_slug;
             props.onUserSelected?.(newSlug);
