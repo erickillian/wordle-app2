@@ -53,7 +53,7 @@ export default defineComponent({
         },
     },
     setup(props) {
-        const { searchQuery, items, loading, error, page, onPageUpdate } = usePaginatedSearch<User>(fetchUsers);
+        const { searchQuery, items, loading, error, page, onPageUpdate } = usePaginatedSearch(fetchUsers);
 
         // Select user and notify parent component
         const selectUser = (item) => {
