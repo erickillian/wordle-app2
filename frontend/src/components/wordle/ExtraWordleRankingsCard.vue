@@ -1,9 +1,7 @@
 <template>
     <v-card max-width="400">
         <v-card-title style="text-align: center; display: flex; flex-direction: column; align-items: center;">
-            <v-avatar size="64" class="mx-auto mb-2">
-            <img v-if="wordle?.user?.profile_picture" :src="getProfilePictureUrl(wordle.user.profile_picture)" alt="Profile Picture" width="64" height="64">
-            </v-avatar>
+            <v-img v-if="wordle?.user?.profile_picture" :src="getProfilePictureUrl(wordle.user.profile_picture)" alt="Profile Picture" width="64" height="64" />
             <div>{{ wordle?.user?.display_name ? wordle.user.display_name : 'Unknown User' }}</div>
         </v-card-title>
         <v-card-subtitle style="margin-bottom: 10px;">
