@@ -67,7 +67,7 @@ export default defineComponent({
         });
 
         const onUserSelect = (slug: string): void => {
-            if (slug !== '') {
+            if (slug !== null) {
                 router.push(`/users/${slug}`);
                 selectedUser.value = slug;
             } else {

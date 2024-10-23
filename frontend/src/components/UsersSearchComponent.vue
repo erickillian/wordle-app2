@@ -1,51 +1,22 @@
 <template>
-    <v-card class="pa-4" style="overflow-y: auto;" elevation="0">
-        <v-card-title>
-            <v-text-field v-model="searchQuery" append-icon="mdi-account-search-outline" label="Search Users" dense
-                outlined single-line hide-details />
-        </v-card-title>
-        <v-card-text>
-            <v-alert v-if="error" type="error" dismissible>
-                Error Loading Users
-            </v-alert>
-            <v-data-table-server v-else :headers="headers" :items="items" :items-length="items.length" item-key="slug" dense class="elevation-0"
-                :loading="loading" hover @click:row="selectUser" hide-default-footer>
-                <template v-slot:item="{ item }">
-                    <tr :class="{ 'highlighted-row': selectedUserSlug === item.slug }" @click="() => selectUser(item)"
-                        style="cursor: pointer;">
-                        <td>{{ item.display_name }}</td>
-                    </tr>
-                </template>
-                <template v-slot:bottom>
-                    <div class="d-flex justify-center py-4 align-center">
-                        <v-pagination v-model="page.current_page" :length="page.total_pages" :total-visible="5"
-                            size="small" @update:model-value="onPageUpdate" />
-                    </div>
-                </template>
-                <template v-slot:no-data>
-                    <div class="pa-4">
-                        <v-alert :value="true" icon="mdi-information">
-                            No users found.
-                        </v-alert>
-                    </div>
-                </template>
-            </v-data-table-server>
-        </v-card-text>
-    </v-card>
+    <SearchTable :headers="headers" :items="items" :search-query="searchQuery" item-key="slug"
+        item-display-field="display_name" search-label="Search Users" search-icon="mdi-account-search-outline"
+        item-name-plural="users" :selected-item="selectedUserSlug" :error="error" :loading="loading" :page="page"
+        @item-selected="selectUser" @update:page="onPageUpdate" />
 </template>
 
 <script>
-import { defineComponent } from "vue";
-import { fetchUsers } from "@/api/users";
-import { usePaginatedSearch } from "@/composables/usePaginatedSearch";
+import { defineComponent } from 'vue';
+import { fetchUsers } from '@/api/users';
+import { usePaginatedSearch } from '@/composables/usePaginatedSearch';
+import SearchTable from '@/components/SearchTable.vue';
 
 export default defineComponent({
-    name: "UserListPage",
+    name: 'UsersSearchComponent',
     props: {
         selectedUserSlug: {
             type: String,
-            required: false,
-            default: '',
+            required: true,
         },
         onUserSelected: {
             type: Function,
@@ -55,28 +26,28 @@ export default defineComponent({
     setup(props) {
         const { searchQuery, items, loading, error, page, onPageUpdate } = usePaginatedSearch(fetchUsers);
 
-        // Select user and notify parent component
-        const selectUser = (item) => {
-            const user_slug = item.slug;
-            const newSlug = (props.selectedUserSlug === user_slug) ? '' : user_slug;
+        const headers = [{ title: 'User', value: 'display_name' }];
+
+        const selectUser = (slug) => {
+            const newSlug = props.selectedUserSlug === slug ? '' : slug;
             props.onUserSelected?.(newSlug);
         };
 
-        // // Watch for prop change
-        // watch(() => props.selectedUserSlug, (slug) => {
-        //     // Ensure selected user slug updates properly
-        // });
+        const onSearchQueryUpdate = (newQuery) => {
+            searchQuery.value = newQuery;
+        };
 
         return {
-            searchQuery, items, loading, error, page, selectUser, selectedUserSlug: props.selectedUserSlug, headers: [{ title: "User", value: "display_name" }], onPageUpdate,
+            headers,
+            items,
+            loading,
+            error,
+            page,
+            selectUser,
+            onPageUpdate,
+            searchQuery,
+            onSearchQueryUpdate,
         };
     },
 });
 </script>
-
-<style scoped>
-.highlighted-row {
-    background-color: #ffffff33;
-    transition: background-color 0.3s ease-in-out;
-}
-</style>
