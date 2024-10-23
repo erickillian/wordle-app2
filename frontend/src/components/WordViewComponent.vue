@@ -119,10 +119,10 @@ export default defineComponent({
                 },
             ],
             wordleListCardHeaders: [
-                { title: 'User', value: 'user' },
-                { title: 'Date', value: 'start_time' },
-                { title: 'Guesses', value: 'guesses' },
-                { title: 'Time', value: 'time' },
+                { title: 'User', key: 'user' },
+                { title: 'Date', key: 'start_time' },
+                { title: 'Guesses', key: 'guesses' },
+                { title: 'Time', key: 'time' },
             ],
         };
     },

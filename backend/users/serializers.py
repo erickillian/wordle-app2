@@ -22,8 +22,8 @@ class UserSelfSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["slug", "email", "full_name", "date_joined", "color_mode", "profile_picture"]
-        read_only_fields = ["email", "date_joined", "slug"]
+        fields = ["slug", "email", "full_name", "date_joined", "color_mode", "profile_picture", "display_name"]
+        read_only_fields = ["email", "date_joined", "slug", "display_name"]
 
 
 class UserLoginSerializer(serializers.Serializer):

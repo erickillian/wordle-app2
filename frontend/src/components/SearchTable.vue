@@ -12,8 +12,8 @@
                 :item-key="itemKey" dense class="elevation-0" :loading="loading" hover @click:row="selectItem"
                 hide-default-footer>
                 <template v-slot:item="{ item }">
-                    <tr :class="['data-table-row-search', { 'highlighted-row': selectedItem === item[itemKey] }]" @click="() => selectItem(item)"
-                        style="cursor: pointer;">
+                    <tr :class="['data-table-row-search', { 'highlighted-row': selectedItem === item[itemKey] }]"
+                        @click="() => selectItem(item)" v-ripple style="cursor: pointer;">
                         <td>{{ item[itemDisplayField] }}</td>
                     </tr>
                 </template>

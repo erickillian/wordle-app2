@@ -80,7 +80,6 @@ export default {
         });
         const userSessionsLoading = ref(false);
         const currTokenCreatedAt = useAuthStore().refreshTokenCreatedAt;
-        console.log(currTokenCreatedAt);
 
         // Fetch the sessions from the API
         const fetchActiveTokens = async (currentPage = 1) => {
@@ -106,7 +105,6 @@ export default {
 
         // Renamed this method to avoid recursion
         const handleRemoveSession = async (created_at) => {
-            console.log('Remove session:', created_at);
             try {
                 await apiRemoveSession(created_at); // Call the API function
                 let new_page = page.value.current_page;

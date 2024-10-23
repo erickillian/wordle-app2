@@ -85,7 +85,7 @@ export default defineComponent({
 
             try {
                 await authStore.register(email.value, password1.value, hcaptcha.value);
-                router.push('/profile'); // Redirect to a different page after registration
+                router.push('/dashboard'); // Redirect to a different page after registration
                 // Set the theme based on the user's color mode
                 theme.global.name.value = authStore.user?.color_mode || 'system';
 

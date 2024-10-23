@@ -65,7 +65,7 @@ export default defineComponent({
 
             try {
                 await authStore.login(email.value, password.value);
-                router.push('/profile'); // Redirect to a different page after login
+                router.push('/dashboard'); // Redirect to a different page after login
                 // set the theme based on the user's color mode
                 theme.global.name.value = authStore.user?.color_mode || 'system';
 

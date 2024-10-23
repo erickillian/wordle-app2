@@ -29,58 +29,8 @@
             </v-dialog>
         </v-card-text>
 
-        <v-data-table-server :headers="getHeaders()" :items="items" class="elevation-0" hide-default-footer disable-sort
+        <v-data-table-server :headers="computedHeaders" :items="items" class="elevation-0" hide-default-footer disable-sort
             hover @click:row="handleRowClick" :items-length="items.length" :loading="loading">
-            <!-- if rankItems is turned on add a column that shows each players rank -->
-            <template v-slot:[`item.rank`]="{ index, item }" v-if="rankItems">
-                <v-list-item-title>
-                    <v-icon v-if="index + 1 <= 3 && (page.current_page == 1)" :color="placeColors[index + 1]">
-                        mdi-star-circle
-                    </v-icon>
-                    {{ (page.current_page - 1) * page.page_size + index + 1 }}
-                </v-list-item-title>
-            </template>
-
-            <!-- User Full Name with Ranking Icons -->
-            <template v-slot:[`item.user`]="{ index, item }">
-
-                <div style="display: flex; align-items: center;">
-                    <v-list-item-media>
-                        <v-img :src="getProfilePictureUrl(item.user ? item.user.profile_picture : item.profile_picture)"
-                            width="32" height="32" class="mr-2" />
-                    </v-list-item-media>
-
-                    <v-list-item-title>
-                        <!-- <v-icon v-if="rankItems && (index + 1 <= 3) && (page.current_page == 1)"
-                            :color="placeColors[index + 1]">
-                            mdi-star-circle
-                        </v-icon> -->
-                        {{ item.user ? (item.user.display_name) : (item.display_name) }}
-                    </v-list-item-title>
-                </div>
-            </template>
-
-            <!-- Guesses with Chip Color -->
-            <template v-slot:[`item.guesses`]="{ item }">
-                <v-chip :color="getColor(item.solved)">
-                    {{ item.guesses }}
-                </v-chip>
-            </template>
-
-            <template v-slot:[`item.start_time`]="{ item }">
-                <v-list-item-title>
-                    {{ new Date(item.start_time).toLocaleDateString('en-US', { timeZone: 'UTC', year: 'numeric', month: 'long', day: 'numeric' }) }}
-                </v-list-item-title>
-            </template>
-
-            <!-- Streak -->
-            <template v-slot:[`item.streak`]="{ item }">
-                <v-list-item-title v-if="item.streak >= 3">
-                    <img v-if="item.streak >= 3" style="max-width: 20px; max-height: 20px" class="mr-3"
-                        src="/streak.png" />
-                    {{ item.streak }}
-                </v-list-item-title>
-            </template>
 
             <!-- Pagination -->
             <template v-slot:bottom>
@@ -99,14 +49,68 @@
                     </v-alert>
                 </div>
             </template>
+
+            <template v-slot:[`item`]="{ item, index }">
+                <tr v-ripple @click="handleRowClick(item)" style="cursor: pointer;">
+                    <!-- Iterate over headers dynamically -->
+                    <template v-for="(header, key) in computedHeaders" :key="key">
+                        <td>
+                            <!-- Check if a custom slot is defined for the column -->
+                            <template v-if="header.key == 'rank'">
+                                <v-list-item-title>
+                                    <v-icon v-if="index + 1 <= 3 && (page.current_page == 1)"
+                                        :color="placeColors[index + 1]">
+                                        mdi-star-circle
+                                    </v-icon>
+                                    {{ (page.current_page - 1) * page.page_size + index + 1 }}
+                                </v-list-item-title>
+                            </template>
+                            <template v-if="header.key == 'user'">
+                                <div style="display: flex; align-items: center;">
+                                    <v-list-item-media>
+                                        <v-img
+                                            :src="getProfilePictureUrl(item.user ? item.user.profile_picture : item.profile_picture)"
+                                            width="32" height="32" class="mr-2" />
+                                    </v-list-item-media>
+
+                                    <v-list-item-title>
+                                        {{ item.user ? (item.user.display_name) : (item.display_name) }}
+                                    </v-list-item-title>
+                                </div>
+                            </template>
+                            <template v-else-if="header.key == 'guesses'">
+                                <v-chip :color="getColor(item.solved)">
+                                    {{ item.guesses }}
+                                </v-chip>
+                            </template>
+                            <template v-else-if="header.key == 'start_time'">
+                                <v-list-item-title>
+                                    {{ new Date(item.start_time).toLocaleDateString('en-US', { timeZone: 'UTC', year:
+                                    'numeric', month: 'long', day: 'numeric' }) }}
+                                </v-list-item-title>
+                            </template>
+
+                            <template v-else>
+                                <!-- Default handling if no custom slot exists -->
+                                <span v-if="header.key === 'rank'">
+                                    <slot :name="`item.rank`" :item="item" :index="index"></slot>
+                                </span>
+                                <span v-else>
+                                    {{ item[header.key] }}
+                                </span>
+                            </template>
+                        </td>
+                    </template>
+                </tr>
+            </template>
+
         </v-data-table-server>
     </v-card>
 </template>
 
 <script lang>
-import { onMounted, ref } from 'vue';
+import { computed } from 'vue';
 import { useRouter } from 'vue-router';
-
 
 export default {
     props: {
@@ -169,11 +173,10 @@ export default {
         };
 
         const handleRowClick = (item, event) => {
-            const rowItem = props.items[event.index];
-            if (rowItem.user) {  // wordles have the user attribute but users do not as they are the user
-                router.push(`/wordle/${rowItem.slug}`);
+            if (item.user) {  // wordles have the user attribute but users do not as they are the user
+                router.push(`/wordle/${item.slug}`);
             } else {
-                router.push(`/users/${rowItem.slug}`);
+                router.push(`/users/${item.slug}`);
             }
         }
 
@@ -181,7 +184,7 @@ export default {
             return solved ? "green" : "red";
         };
 
-        const getHeaders = () => {
+        const computedHeaders = computed(() => {
             let headers = [...props.headers];
             if (props.rankItems) {
                 headers.unshift({
@@ -191,7 +194,7 @@ export default {
                 });
             }
             return headers;
-        };
+        });
 
         function getProfilePictureUrl(picture_url) {
             return `/static/profile_pictures/${picture_url}`;
@@ -204,7 +207,7 @@ export default {
         return {
             handleRowClick,
             getColor,
-            getHeaders,
+            computedHeaders,
             onPageUpdate,
             getProfilePictureUrl,
         };

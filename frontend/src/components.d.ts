@@ -11,6 +11,7 @@ declare module 'vue' {
     BigNumberCard: typeof import('./components/BigNumberCard.vue')['default']
     DashboardListCard: typeof import('./components/DashboardListCard.vue')['default']
     ExtraWordleRankingsCard: typeof import('./components/wordle/ExtraWordleRankingsCard.vue')['default']
+    MyWordleCard: typeof import('./components/MyWordleCard.vue')['default']
     NavBarComponent: typeof import('./components/NavBarComponent.vue')['default']
     NextWordleCard: typeof import('./components/wordle/NextWordleCard.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
