@@ -12,7 +12,7 @@
                 :item-key="itemKey" dense class="elevation-0" :loading="loading" hover @click:row="selectItem"
                 hide-default-footer>
                 <template v-slot:item="{ item }">
-                    <tr :class="{ 'highlighted-row': selectedItem === item[itemKey] }" @click="() => selectItem(item)"
+                    <tr :class="['data-table-row-search', { 'highlighted-row': selectedItem === item[itemKey] }]" @click="() => selectItem(item)"
                         style="cursor: pointer;">
                         <td>{{ item[itemDisplayField] }}</td>
                     </tr>
@@ -117,12 +117,16 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.data-table-row-search {
+    transition: background-color 0.3s ease;
+}
+
 .highlighted-row {
     background-color: rgba(0, 0, 0, 0.1);
     /* Darken the row in light mode */
 }
 
-.v-theme--dark  .highlighted-row {
+.v-theme--dark .highlighted-row {
     background-color: rgba(255, 255, 255, 0.1);
     /* Lighten the row in dark mode */
 }
