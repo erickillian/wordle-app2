@@ -15,6 +15,7 @@ declare module 'vue' {
     NextWordleCard: typeof import('./components/wordle/NextWordleCard.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SearchTable: typeof import('./components/SearchTable.vue')['default']
     StaticWordleComponent: typeof import('./components/wordle/StaticWordleComponent.vue')['default']
     TestWordleComponent: typeof import('./components/wordle/TestWordleComponent.vue')['default']
     TimeClockComponent: typeof import('./components/wordle/TimeClockComponent.vue')['default']

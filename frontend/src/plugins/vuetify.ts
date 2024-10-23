@@ -9,10 +9,7 @@ import '@mdi/font/css/materialdesignicons.css'
 import 'vuetify/styles'
 
 // Composables
-// import { createApp } from 'vue'
 import { createVuetify, type ThemeDefinition } from 'vuetify'
-
-
 
 const mutualColors = {
     primary: '#2B8AEB',
@@ -23,8 +20,6 @@ const mutualColors = {
     warning: '#FB8C00',
 }
 
-
-
 const dark: ThemeDefinition = {
     dark: true,
     colors: {
@@ -34,7 +29,6 @@ const dark: ThemeDefinition = {
         ...mutualColors,
     },
 }
-
 
 const light: ThemeDefinition = {
     dark: false,

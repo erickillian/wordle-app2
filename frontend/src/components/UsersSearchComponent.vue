@@ -2,7 +2,7 @@
     <SearchTable :headers="headers" :items="items" :search-query="searchQuery" item-key="slug"
         item-display-field="display_name" search-label="Search Users" search-icon="mdi-account-search-outline"
         item-name-plural="users" :selected-item="selectedUserSlug" :error="error" :loading="loading" :page="page"
-        @item-selected="selectUser" @update:page="onPageUpdate" />
+        @item-selected="selectUser" @update:page="onPageUpdate" @update:search-query="onSearchQueryUpdate" />
 </template>
 
 <script>

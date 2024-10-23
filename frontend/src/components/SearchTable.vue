@@ -115,3 +115,15 @@ export default defineComponent({
     },
 });
 </script>
+
+<style scoped>
+.highlighted-row {
+    background-color: rgba(0, 0, 0, 0.1);
+    /* Darken the row in light mode */
+}
+
+.v-theme--dark  .highlighted-row {
+    background-color: rgba(255, 255, 255, 0.1);
+    /* Lighten the row in dark mode */
+}
+</style>
