@@ -1,12 +1,8 @@
-from rest_framework import serializers
-from rest_framework_simplejwt.tokens import UntypedToken
-from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
-from django.contrib.auth import get_user_model
-from rest_framework_simplejwt.token_blacklist.models import (
-    OutstandingToken,
-)
-from django.contrib.auth.password_validation import validate_password
 from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.contrib.auth.password_validation import validate_password
+from rest_framework import serializers
+from rest_framework_simplejwt.token_blacklist.models import OutstandingToken
 import requests
 
 

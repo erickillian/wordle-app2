@@ -1,36 +1,28 @@
-from django.http import JsonResponse
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page, never_cache
-from django.forms.models import model_to_dict
-from django.db.models import Avg, Count
-from django.db.models.functions import RowNumber
-from django.db.models import F, Q, Sum, Case, When, IntegerField, Min, Value, CharField, Window, Subquery, OuterRef
-
-
-from rest_framework.permissions import IsAuthenticated
-from django.shortcuts import get_object_or_404
-
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import viewsets
-from rest_framework.filters import SearchFilter
-from django.utils import timezone
 import datetime
+import json
+import os
+import random
 
-import json, os, random
-
-from wordle.models import Wordle
 from django.contrib.auth import get_user_model
-
-from wordle.serializers import *
-
-from wordle.constants import WORDLE_MAX_LENGTH, WORDLE_NUM_GUESSES
-from backend.settings import BASE_DIR
-from rest_framework import generics
-from backend.pagination import StandardResultsSetPagination
 from django.db import transaction
-from backend.pagination import LargerResultsSetPagination
+from django.db.models import Avg, Count, F, Q, Window
+from django.db.models.functions import RowNumber
+from django.shortcuts import get_object_or_404
+from django.utils import timezone
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import never_cache
+
+from rest_framework import generics, status, viewsets
+from rest_framework.filters import SearchFilter
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from backend.pagination import LargerResultsSetPagination, StandardResultsSetPagination
+from backend.settings import BASE_DIR
+from wordle.constants import WORDLE_MAX_LENGTH, WORDLE_NUM_GUESSES
+from wordle.models import Wordle
+from wordle.serializers import *
 
 
 wordle_target_words = json.load(

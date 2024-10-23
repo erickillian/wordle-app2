@@ -1,20 +1,19 @@
-from rest_framework import status
+from django.contrib.auth import authenticate
+from django.utils.decorators import method_decorator
+from django.utils.timezone import datetime
+from django.views.decorators.cache import cache_page
+from rest_framework import generics, status
+from rest_framework.filters import SearchFilter
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
-from rest_framework import generics
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
-from django.contrib.auth import authenticate
+import requests
+
+from backend.pagination import LargerResultsSetPagination, StandardResultsSetPagination
 from users.models import User, TokenMetadata
 from users.serializers import *
-from backend.pagination import StandardResultsSetPagination
-from rest_framework.filters import SearchFilter
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page
-import requests
-from django.utils.timezone import datetime
-from backend.pagination import LargerResultsSetPagination
 
 # Helper function to get the client IP address
 def get_client_ip(request):

@@ -1,10 +1,13 @@
+import json
+import os
+
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
-from wordle.models import Wordle
-from wordle.constants import WORDLE_NUM_GUESSES, WORDLE_MAX_LENGTH
-import json, os
+
 from backend.settings import BASE_DIR
 from users.serializers import UserSerializer
-from django.contrib.auth import get_user_model
+from wordle.constants import WORDLE_NUM_GUESSES, WORDLE_MAX_LENGTH
+from wordle.models import Wordle
 
 User = get_user_model()
 

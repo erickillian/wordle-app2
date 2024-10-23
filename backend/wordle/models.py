@@ -1,11 +1,9 @@
 from django.db import models
-from django.db.models import F, Q
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
-from wordle.constants import WORDLE_MAX_LENGTH, WORDLE_NUM_GUESSES
-from django.utils import timezone
-from django.core.exceptions import ValidationError
 import uuid
+
+from wordle.constants import WORDLE_MAX_LENGTH, WORDLE_NUM_GUESSES
 
 
 User = get_user_model()
