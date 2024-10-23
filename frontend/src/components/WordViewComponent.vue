@@ -1,8 +1,8 @@
 <template>
     <v-card style="height: 100%">
-        <v-card-title class="py-5 d-flex align-items-end">
+        <v-card-title class="py-2 d-flex align-items-end">
             <div class="d-flex align-items-center">
-                <h1 class="mt-4">{{ word }}</h1>
+                <h1 class="mt-2">{{ word }}</h1>
             </div>
         </v-card-title>
 
