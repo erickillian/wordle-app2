@@ -1,17 +1,23 @@
 <template>
     <v-container fluid>
-        <v-row rows="12">
+        <v-row>
             <v-col cols="12" xl="6" lg="5" md="12">
-                <DashboardListCard title="Today's Wordles" :items="todays_wordles" :loading="todays_wordles_loading"
-                    :headers="todaysWordlesHeaders" icon="mdi-calendar-today" :page-change="getTodaysWordles"
-                    :page="todays_wordles_page" rank-items>
-                    <v-card-text>
-                        <v-row>
-                            <v-col cols="12">
+                <v-row>
+                    <v-col cols="12">
+                        <MyWordleCard />
+                    </v-col>
+                </v-row>
+                <v-row>
+                    <v-col cols="12">
+                        <DashboardListCard title="Today's Wordles" :items="todays_wordles" :loading="todays_wordles_loading"
+                            :headers="todaysWordlesHeaders" icon="mdi-calendar-today" :page-change="getTodaysWordles"
+                            :page="todays_wordles_page" rank-items>
+                            <v-card-text>
                                 <v-row>
                                     <v-col cols="12">
                                         <h6 class="text-h6">
-                                            Today's Wordles showcase the top players of the day. The first three places
+                                            Today's Wordles showcase the top players of the day. The first three
+                                            places
                                             are awarded medals:
                                         </h6>
                                     </v-col>
@@ -33,17 +39,19 @@
                                     </v-col>
                                     <v-col cols="12">
                                         <p>
-                                            Players are ranked primarily by the number of guesses they took to solve the
-                                            Wordle. In case of a tie, the time taken to solve the Wordle is used as the
+                                            Players are ranked primarily by the number of guesses they took to solve
+                                            the
+                                            Wordle. In case of a tie, the time taken to solve the Wordle is used as
+                                            the
                                             tiebreaker. This ensures a fair and competitive environment where both
                                             accuracy and speed are rewarded.
                                         </p>
                                     </v-col>
                                 </v-row>
-                            </v-col>
-                        </v-row>
-                    </v-card-text>
-                </DashboardListCard>
+                            </v-card-text>
+                        </DashboardListCard>
+                    </v-col>
+                </v-row>
             </v-col>
 
             <v-col cols="12" xl="6" lg="7" md="12">
@@ -56,7 +64,8 @@
                                 <v-row>
                                     <v-col cols="12">
                                         <h6 class="text-h6">
-                                            Wordle Leaders - Guesses showcases the top players based on their average
+                                            Wordle Leaders - Guesses showcases the top players based on their
+                                            average
                                             number of guesses.
                                         </h6>
                                     </v-col>
@@ -66,16 +75,21 @@
                                     </v-col>
                                     <v-col cols="12">
                                         <p>
-                                            The average number of guesses is calculated by taking the total number of
-                                            guesses a player has made across all Wordles and dividing it by the number
-                                            of Wordles they have solved. This metric highlights players who consistently
-                                            solve Wordles with fewer guesses, demonstrating their skill and strategy.
+                                            The average number of guesses is calculated by taking the total number
+                                            of
+                                            guesses a player has made across all Wordles and dividing it by the
+                                            number
+                                            of Wordles they have solved. This metric highlights players who
+                                            consistently
+                                            solve Wordles with fewer guesses, demonstrating their skill and
+                                            strategy.
                                         </p>
                                     </v-col>
                                     <v-col cols="12">
                                         <p>
                                             Note: To appear on this leaderboard, you must have completed at least 10
-                                            Wordles. This ensures that the rankings are based on a sufficient number of
+                                            Wordles. This ensures that the rankings are based on a sufficient number
+                                            of
                                             games to accurately reflect a player's skill and consistency.
                                         </p>
                                     </v-col>
@@ -91,7 +105,8 @@
                                 <v-row>
                                     <v-col cols="12">
                                         <h6 class="text-h6">
-                                            Wordle Leaders - Time showcases the top players based on their average time
+                                            Wordle Leaders - Time showcases the top players based on their average
+                                            time
                                             to solve Wordles.
                                         </h6>
                                     </v-col>
@@ -101,8 +116,10 @@
                                     </v-col>
                                     <v-col cols="12">
                                         <p>
-                                            The average time is calculated by taking the total time a player has spent
-                                            solving Wordles and dividing it by the number of Wordles they have solved.
+                                            The average time is calculated by taking the total time a player has
+                                            spent
+                                            solving Wordles and dividing it by the number of Wordles they have
+                                            solved.
                                             This metric highlights players who consistently solve Wordles quickly,
                                             demonstrating their speed and efficiency.
                                         </p>
@@ -110,7 +127,8 @@
                                     <v-col cols="12">
                                         <p>
                                             Note: To appear on this leaderboard, you must have completed at least 10
-                                            Wordles. This ensures that the rankings are based on a sufficient number of
+                                            Wordles. This ensures that the rankings are based on a sufficient number
+                                            of
                                             games to accurately reflect a player's skill and consistency.
                                         </p>
                                     </v-col>
@@ -136,15 +154,21 @@
                                     </v-col>
                                     <v-col cols="12">
                                         <p>
-                                            This leaderboard calculates the number of gold, silver, and bronze medals a
-                                            user has. Medals are converted into points: gold = 3, silver = 2, and bronze
-                                            = 1. Users are primarily sorted by the number of gold medals. In case of a
+                                            This leaderboard calculates the number of gold, silver, and bronze
+                                            medals a
+                                            user has. Medals are converted into points: gold = 3, silver = 2, and
+                                            bronze
+                                            = 1. Users are primarily sorted by the number of gold medals. In case of
+                                            a
                                             tie, the total points are used to determine the ranking.
                                         </p>
                                         <p>
-                                            A gold medal is awarded to the player who solved a Wordle with the fewest
-                                            guesses for that day. Silver is for the second fewest, and bronze for the
-                                            third. In case of a tie in the number of guesses, the time taken to solve
+                                            A gold medal is awarded to the player who solved a Wordle with the
+                                            fewest
+                                            guesses for that day. Silver is for the second fewest, and bronze for
+                                            the
+                                            third. In case of a tie in the number of guesses, the time taken to
+                                            solve
                                             the Wordle is used as a tiebreaker.
                                         </p>
                                     </v-col>
@@ -160,7 +184,8 @@
                                 <v-row>
                                     <v-col cols="12">
                                         <h6 class="text-h6">
-                                            Wall of Shame highlights the players who failed to complete their Wordles.
+                                            Wall of Shame highlights the players who failed to complete their
+                                            Wordles.
                                         </h6>
                                     </v-col>
                                     <v-col cols="12" class="text-center">
@@ -188,6 +213,7 @@
 import { defineComponent, onMounted } from 'vue';
 import BigNumberCard from '@/components/BigNumberCard.vue';
 import DashboardListCard from '@/components/DashboardListCard.vue';
+import MyWordleCard from '@/components/MyWordleCard.vue';
 import { shame, guessesLeaders, timeLeaders, medalLeaders, today } from "@/api/wordle";
 import { Page } from "@/types/index";
 

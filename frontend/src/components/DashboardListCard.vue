@@ -29,8 +29,8 @@
             </v-dialog>
         </v-card-text>
 
-        <v-data-table-server :headers="computedHeaders" :items="items" class="elevation-0" hide-default-footer disable-sort
-            hover @click:row="handleRowClick" :items-length="items.length" :loading="loading">
+        <v-data-table-server :headers="computedHeaders" :items="items" class="elevation-0" hide-default-footer
+            disable-sort hover @click:row="handleRowClick" :items-length="items.length" :loading="loading">
 
             <!-- Pagination -->
             <template v-slot:bottom>
@@ -50,7 +50,7 @@
                 </div>
             </template>
 
-            <template v-slot:[`item`]="{ item, index }">
+            <template v-slot:["item"]="{ item, index }">
                 <tr v-ripple @click="handleRowClick(item)" style="cursor: pointer;">
                     <!-- Iterate over headers dynamically -->
                     <template v-for="(header, key) in computedHeaders" :key="key">
@@ -103,7 +103,6 @@
                     </template>
                 </tr>
             </template>
-
         </v-data-table-server>
     </v-card>
 </template>
