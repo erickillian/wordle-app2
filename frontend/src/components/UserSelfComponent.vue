@@ -43,7 +43,7 @@
 
                         <div class="text-center mt-5">
                             <h3 class="text-h6 font-weight-bold">
-                                {{ user.full_name }}
+                                {{ user.display_name }}
                             </h3>
                             <p class="text-body-2">{{ user.about }}</p>
                         </div>

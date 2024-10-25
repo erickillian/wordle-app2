@@ -212,6 +212,7 @@ export default defineComponent({
 
         onMounted(async () => {
             getUserAndStats();
+            getUserWordles(1);
         });
 
         watch(() => props.slug, (newSlug) => {
