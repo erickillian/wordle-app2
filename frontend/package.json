@@ -11,6 +11,7 @@
   "dependencies": {
     "@mdi/font": "7.4.47",
     "axios": "^1.7.7",
+    "chart.js": "^4.4.5",
     "confetti-js": "^0.0.18",
     "core-js": "^3.37.1",
     "dotenv": "^16.4.5",
@@ -18,7 +19,6 @@
     "pinia-plugin-persistedstate": "^4.0.1",
     "roboto-fontface": "*",
     "vue": "^3.4.31",
-    "vue-chartjs": "^5.3.1",
     "vuetify": "^3.6.11"
   },
   "devDependencies": {
