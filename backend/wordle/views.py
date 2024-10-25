@@ -624,4 +624,6 @@ class WordWordleListView(generics.ListAPIView):
     pagination_class = StandardResultsSetPagination
 
     def get_queryset(self):
-        return Wordle.objects.filter(word=self.kwargs["word"], active=False).order_by("-start_time")
+        return Wordle.objects.filter(word=self.kwargs["word"], active=False).order_by(
+            "-solved", "guesses", "time", "start_time"
+        )
