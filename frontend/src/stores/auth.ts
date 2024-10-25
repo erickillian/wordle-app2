@@ -9,7 +9,7 @@ export const useAuthStore = defineStore('auth', {
             display_name: "",
             date_joined: "",
             color_mode: "system",
-            profile_picture: "",
+            profile_picture: "",    
         },
         user_loading: false,
         user_error: null,

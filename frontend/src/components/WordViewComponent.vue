@@ -8,36 +8,42 @@
             </v-row>
         </v-card-title>
 
-
         <v-tabs v-model="activeTab" class="mt-3" grow color="primary">
             <v-tab v-for="(tab, index) in tabs" :key="index" :value="tab.value">
                 <v-icon start>{{ tab.icon }}</v-icon>
                 {{ tab.title }}
             </v-tab>
         </v-tabs>
-
-        <v-card-text>
-            <v-tabs-window v-model="activeTab">
-                <v-tabs-window-item value="stats">
-                    <v-list>
-                        <v-list-item v-for="(stat, index) in user_stats" :key="index"
-                            :subtitle="word_stats ? (stat.unit === '%' ? word_stats[stat.dataName] + stat.unit : word_stats[stat.dataName] + ' ' + stat.unit) : 'N/A'"
-                            :title="stat.title">
-                            <template v-slot:prepend>
-                                <v-avatar color="primary">
-                                    <v-icon color="white">{{ stat.icon }}</v-icon>
-                                </v-avatar>
-                            </template>
-                        </v-list-item>
-                    </v-list>
-                </v-tabs-window-item>
-                <v-tabs-window-item value="guesses">
+        <v-tabs-window v-model="activeTab">
+            <v-tabs-window-item value="stats">
+                <v-card-text>
+                    <v-container>
+                        <v-row>
+                            <v-col v-for="(stat, index) in user_stats" :key="index" cols="12" sm="6" md="6" lg="6" xl="3">
+                                <v-list-item
+                                    :subtitle="word_stats ? (stat.unit === '%' ? parseFloat(word_stats[stat.dataName]).toFixed(2) + stat.unit : word_stats[stat.dataName] + ' ' + stat.unit) : 'N/A'"
+                                    :title="stat.title">
+                                    <template v-slot:prepend>
+                                        <v-avatar color="primary">
+                                            <v-icon color="white">{{ stat.icon }}</v-icon>
+                                        </v-avatar>
+                                    </template>
+                                </v-list-item>
+                            </v-col>
+                        </v-row>
+                    </v-container>
+                </v-card-text>
+            </v-tabs-window-item>
+            <v-tabs-window-item value="guesses">
+                <v-card-text>
                     <BarGraph :keys="word_guess_keys" :values="word_guess_values" />
-                </v-tabs-window-item>
-                <v-tabs-window-item value="wordles">
+                </v-card-text>
+            </v-tabs-window-item>
+            <v-tabs-window-item value="wordles">
+                <v-card-text>
                     <DashboardListCard title="Word Wordles" :items="word_wordles" :loading="word_wordles_loading"
                         :headers="wordleListCardHeaders" icon="mdi-account" :page-change="getWordWordles"
-                        :page="word_wordles_page" :num-pagination="7">
+                        :page="word_wordles_page" :num-pagination="7" elevation=0>
                         <v-card-text>
                             <v-row>
                                 <v-col cols="12">
@@ -64,9 +70,9 @@
                             </v-row>
                         </v-card-text>
                     </DashboardListCard>
-                </v-tabs-window-item>
-            </v-tabs-window>
-        </v-card-text>
+                </v-card-text>
+            </v-tabs-window-item>
+        </v-tabs-window>
     </v-card>
 </template>
 
