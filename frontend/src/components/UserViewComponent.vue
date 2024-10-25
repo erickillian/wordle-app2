@@ -1,12 +1,18 @@
 <template>
     <v-card style="height: 100%">
-        <v-card-title class="py-5 d-flex align-items-end">
-            <div class="d-flex align-items-center">
-                <v-img :src="getProfilePictureUrl(user.profile_picture)" width="100" height="100" class="mr-4" />
-                <h1 class="mt-4">{{ user.display_name }}</h1>
-            </div>
+        <v-card-title class="py-2">
+            <v-row justify="center" class="my-0">
+                <v-col cols="auto" class="text-center">
+                    <v-img :src="getProfilePictureUrl(user.profile_picture)" width="100" height="100" 
+                        style="max-width: 100%; height: auto;" />
+                </v-col>
+            </v-row>
+            <v-row justify="center" class="my-0">
+                <v-col cols="auto" class="text-center">
+                    <h1 style="font-size: 2rem; text-align: center;">{{ user.display_name }}</h1>
+                </v-col>
+            </v-row>
         </v-card-title>
-
 
         <v-tabs v-model="activeTab" class="mt-3" grow color="primary">
             <v-tab v-for="(tab, index) in tabs" :key="index" :value="tab.value">
@@ -14,29 +20,42 @@
                 {{ tab.title }}
             </v-tab>
         </v-tabs>
-
-        <v-card-text>
-            <v-tabs-window v-model="activeTab">
-                <v-tabs-window-item value="stats">
-                    <v-list>
-                        <v-list-item v-for="(stat, index) in user_stats" :key="index"
-                            :subtitle="user_stats_wordle ? (stat.unit === '%' ? user_stats_wordle[stat.dataName] + stat.unit : user_stats_wordle[stat.dataName] + ' ' + stat.unit) : 'N/A'"
-                            :title="stat.title">
-                            <template v-slot:prepend>
-                                <v-avatar color="primary">
-                                    <v-icon color="white">{{ stat.icon }}</v-icon>
-                                </v-avatar>
-                            </template>
-                        </v-list-item>
-                    </v-list>
-                </v-tabs-window-item>
-                <v-tabs-window-item value="guesses">
+        <v-tabs-window v-model="activeTab">
+            <v-tabs-window-item value="stats">
+                <v-card-text>
+                    <v-container>
+                        <v-row>
+                            <v-col v-for="(stat, index) in user_stats" :key="index" cols="12" sm="6" md="6" lg="6"
+                                xl="3">
+                                <v-list-item
+                                    :subtitle="user_stats_wordle ? (stat.unit === '%' ? parseFloat(user_stats_wordle[stat.dataName]).toFixed(2) + stat.unit : user_stats_wordle[stat.dataName] + ' ' + stat.unit) : 'N/A'"
+                                    :title="stat.title">
+                                    <template v-slot:prepend>
+                                        <v-avatar color="primary">
+                                            <v-icon color="white">{{ stat.icon }}</v-icon>
+                                        </v-avatar>
+                                    </template>
+                                </v-list-item>
+                            </v-col>
+                        </v-row>
+                    </v-container>
+                </v-card-text>
+                <v-sparkline line-width="0" auto-line-width fill :gradient="gradient"
+                    gradient-direction="right"
+                    :model-value="user_stats_wordle?.activity || default_sparkline_data" :padding="0"
+                    smooth :stroke-linecap="0" type="trend">
+                </v-sparkline>
+            </v-tabs-window-item>
+            <v-tabs-window-item value="guesses">
+                <v-card-text>
                     <BarGraph :keys="user_guess_distribution_keys" :values="user_guess_distribution_values" />
-                </v-tabs-window-item>
-                <v-tabs-window-item value="wordles">
+                </v-card-text>
+            </v-tabs-window-item>
+            <v-tabs-window-item value="wordles">
+                <v-card-text>
                     <DashboardListCard title="Users Wordles" :items="user_wordles" :loading="user_wordles_loading"
                         :headers="wordleListCardHeaders" icon="mdi-account" :page-change="getUserWordles"
-                        :page="user_wordles_page" :num-pagination="7">
+                        :page="user_wordles_page" :num-pagination="7" elevation=0>
                         <v-card-text>
                             <v-row>
                                 <v-col cols="12">
@@ -62,9 +81,9 @@
                             </v-row>
                         </v-card-text>
                     </DashboardListCard>
-                </v-tabs-window-item>
-            </v-tabs-window>
-        </v-card-text>
+                </v-card-text>
+            </v-tabs-window-item>
+        </v-tabs-window>
     </v-card>
 </template>
 
@@ -126,6 +145,7 @@ export default defineComponent({
                 { title: 'Guesses', key: 'guesses' },
                 { title: 'Time', key: 'time' },
             ],
+            default_sparkline_data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         };
     },
     setup(props) {
@@ -154,6 +174,9 @@ export default defineComponent({
         const user_wordles_page = ref(defaultPage);
         const user_guess_distribution_keys = ref([]);
         const user_guess_distribution_values = ref([]);
+
+        const theme = useTheme();
+        const gradient = ref([theme.current.value.colors.primary,]);
 
         const getUserAndStats = async () => {
             loading.value = true;
@@ -196,14 +219,6 @@ export default defineComponent({
             getUserWordles(1);
         });
 
-        watch(() => activeTab.value, async (newTab) => {
-            if (newTab === 'guesses') {
-            // Perform any necessary actions for the 'guesses' tab
-            } else if (newTab === 'wordles') {
-                getUserWordles(1);
-            }
-        });
-
         return {
             activeTab,
             loading,
@@ -216,6 +231,7 @@ export default defineComponent({
             user_guess_distribution_keys,
             user_guess_distribution_values,
             getProfilePictureUrl,
+            gradient,
         };
     },
 });

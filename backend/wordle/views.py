@@ -309,6 +309,25 @@ class UserWordleStatsView(APIView):
         guess_distribution = {i: guess_distribution.get(i, 0) for i in range(1, WORDLE_NUM_GUESSES + 1)}
         guess_distribution['Fails'] = Wordle.objects.filter(user=user, active=False, solved=False).count()
 
+        # Calculate the date 10 days ago
+        ten_days_ago = timezone.now().date() - datetime.timedelta(days=9)
+
+        # Query Wordles from the last 10 days for the user, excluding active ones
+        recent_wordles = Wordle.objects.filter(
+            user=user, start_time__date__gte=ten_days_ago, active=False
+        ).values("start_time__date", "guesses")
+
+        # Create a dictionary with dates as keys and guesses as values
+        recent_guesses_dict = {wordle["start_time__date"]: wordle["guesses"] for wordle in recent_wordles}
+
+        # Generate a list of the last 10 days, including today
+        last_10_days = [ten_days_ago + datetime.timedelta(days=i) for i in range(10)]
+
+        # Create a list of guesses per day, defaulting to 0 if no guesses were made on that day
+        activity = [
+            recent_guesses_dict.get(day, 0) for day in last_10_days
+        ]
+
         user_data = UserSerializer(user).data
 
         response = {
@@ -319,6 +338,7 @@ class UserWordleStatsView(APIView):
                 "solved_percentage": solved_percentage,
                 "avg_time": time["time__avg"],
                 "guess_distribution": guess_distribution,
+                "activity": activity,
             },
         }
         return Response(response)

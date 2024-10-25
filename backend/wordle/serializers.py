@@ -134,7 +134,6 @@ class WordSerializer(serializers.ModelSerializer):
     guess_distribution = serializers.JSONField(read_only=True, required=False)
 
     def get_definition(self, obj):
-        print(obj, flush=True)
         return word_definitions.get(obj['word'], "")
 
     class Meta:

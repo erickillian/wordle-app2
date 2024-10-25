@@ -1,9 +1,11 @@
 <template>
     <v-card style="height: 100%">
-        <v-card-title class="py-2 d-flex align-items-end">
-            <div class="d-flex align-items-center">
-                <h1 class="mt-2">{{ word }}</h1>
-            </div>
+        <v-card-title class="py-2">
+            <v-row justify="center" class="my-0">
+                <v-col cols="auto" class="text-center">
+                    <h1 style="font-size: 2rem; text-align: center;">{{ word }}</h1>
+                </v-col>
+            </v-row>
         </v-card-title>
 
 
@@ -43,14 +45,17 @@
                                         <v-col cols="12">
                                             <h6 class="text-h6">
                                                 View the users who have guessed this word to see their performance.
-                                                You can analyze their guessing patterns, the time taken to solve the word,
+                                                You can analyze their guessing patterns, the time taken to solve the
+                                                word,
                                                 and their overall success rate.
                                             </h6>
                                         </v-col>
                                         <v-col cols="12">
                                             <p>
-                                                This detailed view helps in understanding how different users approach the word.
-                                                It provides insights into their guessing strategies and areas for improvement,
+                                                This detailed view helps in understanding how different users approach
+                                                the word.
+                                                It provides insights into their guessing strategies and areas for
+                                                improvement,
                                                 making it a valuable tool for both players and analysts.
                                             </p>
                                         </v-col>
@@ -119,6 +124,7 @@ export default defineComponent({
                 },
             ],
             wordleListCardHeaders: [
+                { title: 'Rank', key: 'rank' },
                 { title: 'User', key: 'user' },
                 { title: 'Date', key: 'start_time' },
                 { title: 'Guesses', key: 'guesses' },
@@ -185,14 +191,6 @@ export default defineComponent({
         watch(() => props.word, (newWord) => {
             getWordStats();
             getWordWordles(1);
-        });
-
-        watch(() => activeTab.value, async (newTab) => {
-            if (newTab === 'guesses') {
-                // Perform any necessary actions for the 'guesses' tab
-            } else if (newTab === 'wordles') {
-                wordWordles(props.word, 1);
-            }
         });
 
         return {
