@@ -221,7 +221,8 @@ export default defineComponent({
     name: 'DashboardPage',
     components: {
         BigNumberCard,
-        DashboardListCard
+        DashboardListCard,
+        MyWordleCard,
     },
     data() {
         return {
