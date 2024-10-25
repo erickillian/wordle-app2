@@ -1,5 +1,5 @@
 <template>
-    <v-card class="mx-auto" style="height: 300px;" :href="'/wordle'" link>
+    <v-card class="mx-auto" style="height: 300px;" @click="navigateToWordle" v-bind:ripple>
         <v-card-title class="d-flex flex-column justify-center align-center stats-container" style="height: 250px;">
             <template v-if="loading">
                 <v-progress-circular indeterminate class="my-5" />
@@ -36,6 +36,7 @@ import { status } from '@/api/wordle';
 import ConfettiGenerator from 'confetti-js';
 import { useTheme } from 'vuetify';
 import { onMounted, ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
 
 export default {
     name: 'MyWordleCard',
@@ -50,6 +51,8 @@ export default {
         const definition = ref('');
         const dailyRank = ref(0);
         const wordRank = ref(0);
+
+        const router = useRouter();
 
         const formattedDailyRank = computed(() => formatRank(dailyRank.value));
         const formattedWordRank = computed(() => formatRank(wordRank.value));
@@ -122,6 +125,10 @@ export default {
             // }, 10000); // Start fading after 5 seconds
         };
 
+        const navigateToWordle = () => {
+            router.push('/wordle');
+        };
+
         onMounted(() => {
             fetchWordleStatus();
         });
@@ -139,6 +146,7 @@ export default {
             formattedDailyRank,
             formattedWordRank,
             triggerConfetti,
+            navigateToWordle,
         };
     },
 };
