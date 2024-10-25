@@ -1,5 +1,5 @@
 <template>
-    <v-card class="mx-auto" style="height: 300px;" @click="navigateToWordle" v-bind:ripple>
+    <v-card class="mx-auto" style="height: 300px;" @click="navigateToWordle">
         <v-card-title class="d-flex flex-column justify-center align-center stats-container" style="height: 250px;">
             <template v-if="loading">
                 <v-progress-circular indeterminate class="my-5" />
