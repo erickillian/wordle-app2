@@ -1,33 +1,31 @@
 <template>
-    <v-card>
-        <v-card-title class="d-flex flex-column justify-center align-center stats-container">
+    <v-card class="mx-auto" style="height: 300px;" :href="'/wordle'" link>
+        <v-card-title class="d-flex flex-column justify-center align-center stats-container" style="height: 250px;">
             <template v-if="loading">
-                <v-progress-circular indeterminate color="primary" class="my-5" />
+                <v-progress-circular indeterminate class="my-5" />
             </template>
             <template v-else-if="playedToday">
-                <v-col class="text-center">
-                    <v-icon v-if="dailyRank === 1" class="gold-medal">mdi-crown</v-icon>
-                    <v-icon v-else-if="dailyRank === 2" class="silver-medal">mdi-trophy</v-icon>
-                    <v-icon v-else-if="dailyRank === 3" class="bronze-medal">mdi-trophy-variant</v-icon>
-                    <div v-else class="daily-rank-text">
-                        Your Daily Rank: {{ formattedDailyRank }}
-                    </div>
-                    <h1 class="daily-rank mt-2">{{ formattedDailyRank }}</h1>
-                </v-col>
+                <v-icon v-if="dailyRank === 1" class="gold-medal ma-0">mdi-crown</v-icon>
+                <v-icon v-else-if="dailyRank === 2" class="silver-medal ma-0">mdi-crown</v-icon>
+                <v-icon v-else-if="dailyRank === 3" class="bronze-medal ma-0">mdi-crown</v-icon>
+                <v-icon v-else class="daily-rank-icon mb-1">mdi-trophy</v-icon>
+                <h1 class="daily-rank">{{ formattedDailyRank }}</h1>
             </template>
             <template v-else>
                 <div class="no-played-message">You haven't played Wordle today.</div>
             </template>
+            <v-card-subtitle v-if="!loading && playedToday" class="text-center">
+                <div>Number of Guesses: <strong>{{ guesses }}</strong></div>
+                <div>Time: <strong>{{ time }}</strong></div>
+            </v-card-subtitle>
         </v-card-title>
-        <v-card-subtitle v-if="!loading && playedToday" class="text-center">
-            <div>Number of Guesses: <strong>{{ guesses }}</strong></div>
-            <div>Time: <strong>{{ time }}</strong></div>
-        </v-card-subtitle>
+
         <v-divider></v-divider>
-        <v-card-actions class="d-flex justify-center" v-if="!loading">
-            <v-btn :href="'/wordle'" color="primary" dark class="play-btn mx-2" large v-ripple block>
-            {{ playedToday ? 'See Your Wordle' : 'Play Wordle' }}
-            </v-btn>
+        <v-card-actions class="d-flex justify-center align-center text-center">
+            <v-card-subtitle v-if="!loading">
+                {{ playedToday ? 'See Your Wordle' : 'Play Wordle' }}
+                <v-icon right>mdi-open-in-new</v-icon>
+            </v-card-subtitle>
         </v-card-actions>
         <canvas id="confetti-canvas"></canvas>
     </v-card>
@@ -36,68 +34,78 @@
 <script>
 import { status } from '@/api/wordle';
 import ConfettiGenerator from 'confetti-js';
+import { useTheme } from 'vuetify';
+import { onMounted, ref, computed } from 'vue';
 
 export default {
     name: 'MyWordleCard',
-    data() {
-        return {
-            loading: true,
-            playedToday: false,
-            wordle: '',
-            time: '',
-            guesses: 0,
-            streak: 0,
-            definition: '',
-            dailyRank: 0,
-            wordRank: 0,
-        };
-    },
-    computed: {
-        formattedDailyRank() {
-            return this.formatRank(this.dailyRank);
-        },
-        formattedWordRank() {
-            return this.formatRank(this.wordRank);
-        },
-    },
-    methods: {
-        formatRank(rank) {
+    setup() {
+        const theme = useTheme();
+        const loading = ref(true);
+        const playedToday = ref(false);
+        const word = ref('');
+        const time = ref('');
+        const guesses = ref(0);
+        const streak = ref(0);
+        const definition = ref('');
+        const dailyRank = ref(0);
+        const wordRank = ref(0);
+
+        const formattedDailyRank = computed(() => formatRank(dailyRank.value));
+        const formattedWordRank = computed(() => formatRank(wordRank.value));
+
+        const formatRank = (rank) => {
             if (!rank) return 'N/A';
             const suffixes = ['th', 'st', 'nd', 'rd'];
             const v = rank % 100;
             return rank + (suffixes[(v - 20) % 10] || suffixes[v] || suffixes[0]);
-        },
-        async fetchWordleStatus() {
+        };
+
+        const fetchWordleStatus = async () => {
             try {
                 const response = await status();
                 const data = response.data;
-                this.playedToday = !!data.daily_rank;
-                this.word = data.word;
-                this.time = data.time;
-                this.guesses = data.guesses;
-                this.streak = data.streak;
-                this.definition = data.definition;
-                this.dailyRank = data.daily_rank;
-                this.wordRank = data.word_rank;
+                playedToday.value = !!data.daily_rank;
+                word.value = data.word;
+                time.value = data.time;
+                guesses.value = data.guesses;
+                streak.value = data.streak;
+                definition.value = data.definition;
+                dailyRank.value = data.daily_rank;
+                wordRank.value = data.word_rank;
 
                 // Trigger confetti when loaded and played today
-                if (this.playedToday) {
-                    this.triggerConfetti();
+                if (playedToday.value) {
+                    triggerConfetti();
                 }
             } catch (error) {
                 console.error('Error fetching Wordle status:', error);
             } finally {
-                this.loading = false;
+                loading.value = false;
             }
-        },
-        triggerConfetti() {
+        };
+
+        const triggerConfetti = () => {
+            let colors;
+            if (dailyRank.value === 1) {
+                colors = [[255, 215, 0]]; // Gold
+            } else if (dailyRank.value === 2) {
+                colors = [[192, 192, 192]]; // Silver
+            } else if (dailyRank.value === 3) {
+                colors = [[205, 127, 50]]; // Bronze
+            } else {
+                const isDarkMode = theme.current.value.dark;
+                console.log(theme.current.value.dark)
+                colors = isDarkMode ? [[255, 255, 255]] : [[0, 0, 0]]; // White for dark mode, Black for light mode
+            }
+
             const confettiSettings = {
                 target: 'confetti-canvas',
-                size: 3, // Increase this value for larger confetti pieces (default is 1)
+                size: 2, // Increase this value for larger confetti pieces (default is 1)
                 max: 150, // Number of confetti pieces
                 animate: true,
                 props: ['circle', 'square', 'triangle'], // Optional: customize shapes
-                colors: [[165, 104, 246], [230, 61, 135], [0, 199, 228], [253, 214, 126]], // Custom colors
+                colors: colors, // Custom colors based on rank
                 clock: 25, // Speed of confetti fall
                 rotate: true, // Rotate confetti pieces
                 start_from_edge: false, // Start confetti from edges
@@ -105,17 +113,33 @@ export default {
             };
             const confetti = new ConfettiGenerator(confettiSettings);
             confetti.render();
-            setTimeout(() => {
-            const canvas = document.getElementById('confetti-canvas');
-            if (canvas) {
-                canvas.style.transition = 'opacity 2s ease';
-                canvas.style.opacity = '0';
-            }
-            }, 5000); // Start fading after 5 seconds
-        },
-    },
-    mounted() {
-        this.fetchWordleStatus();
+            // setTimeout(() => {
+            //     const canvas = document.getElementById('confetti-canvas');
+            //     if (canvas) {
+            //         canvas.style.transition = 'opacity 2s ease';
+            //         canvas.style.opacity = '0';
+            //     }
+            // }, 10000); // Start fading after 5 seconds
+        };
+
+        onMounted(() => {
+            fetchWordleStatus();
+        });
+
+        return {
+            loading,
+            playedToday,
+            word,
+            time,
+            guesses,
+            streak,
+            definition,
+            dailyRank,
+            wordRank,
+            formattedDailyRank,
+            formattedWordRank,
+            triggerConfetti,
+        };
     },
 };
 </script>
