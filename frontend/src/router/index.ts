@@ -106,13 +106,8 @@ router.beforeEach((to, from, next) => {
     }
     // If user is logged in and trying to access public routes
     else if (loggedIn && publicRoutes.some(route => route.path === to.path)) {
-        next({ path: '/profile' }); // Redirect to a default internal page
+        next({ path: '/dashboard' }); // Redirect to a default internal page
     }
-    // // If user is not logged in and trying to access internal routes
-    // else if (!loggedIn && internalRoutes.some(route => route.path === to.path)) {
-    //     next({ path: '/login' });
-    // }
-    // Proceed to the route
     else {
         next();
     }
