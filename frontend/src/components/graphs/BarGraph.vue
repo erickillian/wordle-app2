@@ -49,7 +49,16 @@ export default defineComponent({
             },
             scales: {
                 x: { grid: { display: false } },
-                y: { grid: { display: false } }
+                y: { 
+                    grid: { display: false },
+                    ticks: {
+                        callback: function(value) {
+                            if (Number.isInteger(value)) {
+                                return value;
+                            }
+                        }
+                    }
+                }
             }
         };
 
