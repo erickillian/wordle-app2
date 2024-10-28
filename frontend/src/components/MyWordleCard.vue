@@ -1,5 +1,27 @@
 <template>
     <v-card class="mx-auto" style="height: 300px;" @click="navigateToWordle">
+        <div style="position: absolute; top: 10px; right: 10px;">
+            <v-btn icon @click.stop="dialog = true" elevation="0">
+                <v-icon>mdi-information-outline</v-icon>
+            </v-btn>
+        </div>
+
+        <!-- Info Dialog -->
+        <v-dialog v-model="dialog" max-width="600px">
+            <v-card>
+                <v-card-title>
+                    <span class="text-h6">Todays Wordle Ranking</span>
+                </v-card-title>
+                <v-card-text>
+                    This card displays your daily Wordle statistics, including your rank, number of guesses, and time
+                    taken. Click to play or see your Wordle.
+                </v-card-text>
+                <v-card-actions>
+                    <v-btn color="primary" text @click="dialog = false">Close</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+
         <v-card-title class="d-flex flex-column justify-center align-center stats-container" style="height: 250px;">
             <template v-if="loading">
                 <v-progress-circular indeterminate class="my-5" />
@@ -40,6 +62,11 @@ import { useRouter } from 'vue-router';
 
 export default {
     name: 'MyWordleCard',
+    data() {
+        return {
+            dialog: false,
+        };
+    },
     setup() {
         const theme = useTheme();
         const loading = ref(true);
