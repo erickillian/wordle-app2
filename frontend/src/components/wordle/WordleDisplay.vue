@@ -125,6 +125,11 @@ export default defineComponent({
         const currentRow = ref(0);
         const animateNextTileChange = ref(false);
 
+        // Add event listener for keydown event and for key press on buttons
+        const enterButton = ref(null);
+        const deleteButton = ref(null);
+        const tileKeys = ref([]);
+
         const correctMap = {
             0: "wrong",
             1: "wrong-location",
@@ -368,53 +373,55 @@ export default defineComponent({
             animateNextTileChange.value = false;
         };
 
-        // Add event listener for keydown event and for key press on buttons
         onMounted(() => {
             updateTiles([]);
 
             document.addEventListener('keydown', (e) => {
-                handleKey(e.key.toLowerCase());
+            handleKey(e.key.toLowerCase());
             });
-            const buttons = document.querySelectorAll('.key:not([data-enter]):not([data-delete])');
-            buttons.forEach((button) => {
-                button.addEventListener('click', (e) => {
-                    const key = e.target.dataset.key.toLowerCase();
-                    handleKey(key);
-                });
+
+            tileKeys.value = Array.from(document.querySelectorAll('.key:not([data-enter]):not([data-delete])'));
+            tileKeys.value.forEach((button) => {
+            button.addEventListener('click', (e) => {
+                const key = e.target.dataset.key.toLowerCase();
+                handleKey(key);
             });
-            const enterButton = document.querySelector('[data-enter]');
-            enterButton.addEventListener('click', () => {
-                handleKey('enter');
             });
-            const deleteButton = document.querySelector('[data-delete]');
-            deleteButton.addEventListener('click', () => {
-                handleKey('backspace');
+
+            enterButton.value = document.querySelector('[data-enter]');
+            enterButton.value.addEventListener('click', () => {
+            handleKey('enter');
+            });
+
+            deleteButton.value = document.querySelector('[data-delete]');
+            deleteButton.value.addEventListener('click', () => {
+            handleKey('backspace');
             });
         });
 
         // remove event listeners on unmount
         onUnmounted(() => {
             document.removeEventListener('keydown', (e) => {
-                handleKey(e.key);
+            handleKey(e.key);
             });
-            const buttons = document.querySelectorAll('.key:not([data-enter]):not([data-delete])');
-            buttons.forEach((button) => {
-                button.removeEventListener('click', (e) => {
-                    const key = e.target.dataset.key; // Add null checks
-                    handleKey(key);
-                });
+
+            tileKeys.value.forEach((button) => {
+            button.removeEventListener('click', (e) => {
+                const key = e.target.dataset.key;
+                handleKey(key);
             });
-            const enterButton = document.querySelector('[data-enter]');
-            if (enterButton) { // Add null check
-                enterButton.removeEventListener('click', () => {
-                    handleKey('Enter');
-                });
+            });
+
+            if (enterButton.value) {
+            enterButton.value.removeEventListener('click', () => {
+                handleKey('Enter');
+            });
             }
-            const deleteButton = document.querySelector('[data-delete]');
-            if (deleteButton) { // Add null check
-                deleteButton.removeEventListener('click', () => {
-                    handleKey('Backspace');
-                });
+
+            if (deleteButton.value) {
+            deleteButton.value.removeEventListener('click', () => {
+                handleKey('Backspace');
+            });
             }
         });
 
