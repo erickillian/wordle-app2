@@ -24,6 +24,8 @@
                         <li>Guess the 5-letter word by typing in the input field below the tiles.</li>
                         <li>Each guess must be a valid 5-letter word.</li>
                         <li>The color of the tiles will change to show how close your guess was to the word.</li>
+                        <li>Words are assigned randomly to each user on each day.</li>
+                        <li>Your timer will start as soon as you make your first guess.</li>
                     </ul>
                     <br />
                     <v-divider />
