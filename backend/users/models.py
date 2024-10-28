@@ -53,6 +53,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         "chameleon.png",
         "cheetah.png",
         "cow.png",
+        "deer.png",
         "dog.png",
         "duck.png",
         "eagle.png",

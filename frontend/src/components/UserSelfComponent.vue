@@ -156,6 +156,7 @@ export default defineComponent({
                 "chameleon.png",
                 "cheetah.png",
                 "cow.png",
+                "deer.png",
                 "dog.png",
                 "duck.png",
                 "eagle.png",
