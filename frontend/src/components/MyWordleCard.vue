@@ -124,9 +124,7 @@ export default {
             } else if (dailyRank.value === 3) {
                 colors = [[205, 127, 50]]; // Bronze
             } else {
-                const isDarkMode = theme.current.value.dark;
-                console.log(theme.current.value.dark)
-                colors = isDarkMode ? [[255, 255, 255]] : [[0, 0, 0]]; // White for dark mode, Black for light mode
+                return;
             }
 
             const confettiSettings = {
