@@ -1,7 +1,7 @@
 <template>
     <v-row class="justify-center">
         <v-col class="" cols="auto">
-            <WordleCard ref="wordleCard" prevent-input :current-tiles="wordle.guess_history"
+            <WordleCard ref="wordleCard" :loading="loading" prevent-input :current-tiles="wordle.guess_history"
                 :correct-tiles="wordle.correct" />
         </v-col>
         <v-col cols="auto">
@@ -9,7 +9,6 @@
                 <v-col>
                     <TimeClockComponent :time="wordle.time" :start-time="wordle.start_time"
                         :elapsed-time="wordle.time" />
-
                 </v-col>
             </v-row>
             <v-row>
@@ -58,6 +57,7 @@ export default {
             time: "",
         });
         const wordleCard = ref(null);
+        const loading = ref(true);
 
         const getWordle = async () => {
             try {
@@ -65,6 +65,8 @@ export default {
                 Object.assign(wordle.value, { ...response.data });
             } catch (error) {
                 // Handle error
+            } finally {
+                loading.value = false;
             }
         };
 
@@ -75,6 +77,7 @@ export default {
         return {
             wordle,
             wordleCard,
+            loading,
         };
     },
 };

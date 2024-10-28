@@ -4,7 +4,7 @@
             <v-card rounded="lg">
                 <WordleCard ref="wordleCard" :prevent-input="disableInput" :current-tiles="wordle.guess_history"
                     :correct-tiles="wordle.correct" :on-guess-submit="handleGuess" :num-guesses="wordle.guesses"
-                    throw-confetti />
+                    :loading="loading" throw-confetti />
             </v-card>
         </v-col>
         <v-col cols="auto">
@@ -12,7 +12,6 @@
                 <v-col>
                     <TimeClockComponent :time="wordle.time" :start-time="wordle.start_time"
                         :elapsed-time="wordle.time" />
-
                 </v-col>
             </v-row>
             <v-row v-if="wordle?.word">
@@ -35,7 +34,7 @@
 </template>
 
 <script>
-import { ref, onMounted, onUnmounted, watch } from 'vue';
+import { ref, onMounted } from 'vue';
 import WordleCard from "@/components/wordle/WordleCard.vue";
 import TimeClockComponent from '@/components/wordle/TimeClockComponent.vue';
 import NextWordleCard from '@/components/wordle/NextWordleCard.vue';
@@ -61,6 +60,7 @@ export default {
             time: "",
         });
         const disableInput = ref(true);
+        const loading = ref(true); // Add loading ref
         const wordleCard = ref(null); // Ref to the wordleCard
     
         const handleGuess = async (guess_input) => {
@@ -69,7 +69,6 @@ export default {
                 const response = await guess(guess_input);
                 Object.assign(wordle.value, { ...response.data });
                 disableInput.value = response.data.solved;
-
             } catch (error) {
                 console.log(error.response.data);
                 disableInput.value = false;
@@ -87,7 +86,9 @@ export default {
                 Object.assign(wordle.value, { ...response.data });
                 disableInput.value = response.data.solved;
             } catch (error) {
-                
+                console.log(error);
+            } finally {
+                loading.value = false; // Set loading to false after status API call
             }
         });
     
@@ -96,12 +97,11 @@ export default {
             disableInput,
             handleGuess,
             wordleCard,
+            loading, // Return loading ref
         };
     },
 };
 </script>
 
-
 <style scoped>
-
 </style>

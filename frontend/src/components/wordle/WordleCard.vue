@@ -6,6 +6,11 @@
             </v-btn>
         </div>
 
+        <!-- Loading Indicator -->
+        <v-overlay :model-value="loading" class="align-center justify-center" contained>
+            <v-progress-circular indeterminate></v-progress-circular>
+        </v-overlay>
+
         <!-- Info Dialog -->
         <v-dialog v-model="dialog" max-width="600px">
             <v-card class="pa-4">
@@ -112,13 +117,18 @@ export default {
             type: Function,
             required: false,
         },
+        loading: {
+            type: Boolean,
+            required: false,
+            default: false,
+        },
     },
     data() {
         return {
             dialog: false
         };
     },
-    setup(props) {
+    setup() {
         const wordleDisplayRef = ref(null);
 
         const shakeGuess = () => {
