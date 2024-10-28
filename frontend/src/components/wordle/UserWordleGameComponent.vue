@@ -1,9 +1,11 @@
 <template>
     <v-row class="justify-center">
         <v-col cols="auto">
-            <WordleDisplay ref="wordleDisp" :prevent-input="disableInput" :current-tiles="wordle.guess_history"
-                :correct-tiles="wordle.correct" :on-guess-submit="handleGuess" :num-guesses="wordle.guesses"
-                throw-confetti />
+            <v-card rounded="lg">
+                <WordleCard ref="wordleCard" :prevent-input="disableInput" :current-tiles="wordle.guess_history"
+                    :correct-tiles="wordle.correct" :on-guess-submit="handleGuess" :num-guesses="wordle.guesses"
+                    throw-confetti />
+            </v-card>
         </v-col>
         <v-col cols="auto">
             <v-row>
@@ -34,7 +36,7 @@
 
 <script>
 import { ref, onMounted, onUnmounted, watch } from 'vue';
-import WordleDisplay from "@/components/wordle/WordleDisplay.vue";
+import WordleCard from "@/components/wordle/WordleCard.vue";
 import TimeClockComponent from '@/components/wordle/TimeClockComponent.vue';
 import NextWordleCard from '@/components/wordle/NextWordleCard.vue';
 import ExtraWordleRankingsCard from '@/components/wordle/ExtraWordleRankingsCard.vue';
@@ -43,7 +45,7 @@ import { guess, status } from '@/api/wordle';
 export default {
     name: "UserWordleGameComponent",
     components: {
-        WordleDisplay,
+        WordleCard,
         TimeClockComponent,
         NextWordleCard,
         ExtraWordleRankingsCard,
@@ -59,7 +61,7 @@ export default {
             time: "",
         });
         const disableInput = ref(true);
-        const wordleDisp = ref(null); // Ref to the wordleDisp
+        const wordleCard = ref(null); // Ref to the wordleCard
     
         const handleGuess = async (guess_input) => {
             disableInput.value = true;
@@ -71,11 +73,11 @@ export default {
             } catch (error) {
                 console.log(error.response.data);
                 disableInput.value = false;
-                wordleDisp.value.shakeGuess();
+                wordleCard.value.shakeGuess();
                 if (error.response.data?.guess)
-                    wordleDisp.value.showAlert(error.response.data.guess);
+                    wordleCard.value.showAlert(error.response.data.guess);
                 if (error.response.data?.error)
-                    wordleDisp.value.showAlert(error.response.data.error);
+                    wordleCard.value.showAlert(error.response.data.error);
             }
         };
     
@@ -93,7 +95,7 @@ export default {
             wordle,
             disableInput,
             handleGuess,
-            wordleDisp,
+            wordleCard,
         };
     },
 };

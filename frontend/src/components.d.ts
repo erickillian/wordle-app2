@@ -26,6 +26,7 @@ declare module 'vue' {
     UserViewComponent: typeof import('./components/UserViewComponent.vue')['default']
     UserWordleGameComponent: typeof import('./components/wordle/UserWordleGameComponent.vue')['default']
     WordDefinitionCard: typeof import('./components/wordle/WordDefinitionCard.vue')['default']
+    WordleCard: typeof import('./components/wordle/WordleCard.vue')['default']
     WordleDisplay: typeof import('./components/wordle/WordleDisplay.vue')['default']
     WordsSearchComponent: typeof import('./components/WordsSearchComponent.vue')['default']
     WordViewComponent: typeof import('./components/WordViewComponent.vue')['default']

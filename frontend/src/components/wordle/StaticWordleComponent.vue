@@ -1,7 +1,7 @@
 <template>
     <v-row class="justify-center">
         <v-col class="" cols="auto">
-            <WordleDisplay ref="wordleDisp" prevent-input :current-tiles="wordle.guess_history"
+            <WordleCard ref="wordleCard" prevent-input :current-tiles="wordle.guess_history"
                 :correct-tiles="wordle.correct" />
         </v-col>
         <v-col cols="auto">
@@ -28,7 +28,7 @@
 
 <script>
 import { ref, onMounted } from 'vue';
-import WordleDisplay from "@/components/wordle/WordleDisplay.vue";
+import WordleCard from "@/components/wordle/WordleCard.vue";
 import TimeClockComponent from '@/components/wordle/TimeClockComponent.vue';
 import WordDefinitionCard from '@/components/wordle/WordDefinitionCard.vue';
 import ExtraWordleRankingsCard from '@/components/wordle/ExtraWordleRankingsCard.vue';
@@ -37,7 +37,7 @@ import { wordle as fetchWordle } from '@/api/wordle';
 export default {
     name: "StaticWordleComponent",
     components: {
-        WordleDisplay,
+        WordleCard,
         TimeClockComponent,
         ExtraWordleRankingsCard,
     },
@@ -57,7 +57,7 @@ export default {
             correct: "",
             time: "",
         });
-        const wordleDisp = ref(null);
+        const wordleCard = ref(null);
 
         const getWordle = async () => {
             try {
@@ -74,7 +74,7 @@ export default {
 
         return {
             wordle,
-            wordleDisp,
+            wordleCard,
         };
     },
 };

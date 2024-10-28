@@ -2,7 +2,7 @@
     <v-container>
         <v-row class="justify-center">
             <v-col class="" cols="auto">
-                <WordleDisplay ref="wordleDisp" :current-tiles="wordleLetters" :correct-tiles="wordleCorrect"
+                <WordleCard ref="wordleDisp" :current-tiles="wordleLetters" :correct-tiles="wordleCorrect"
                     :on-guess-submit="handleGuess" :preventInput="true" />
             </v-col>
         </v-row>
@@ -11,12 +11,12 @@
 
 <script>
 import { ref, onMounted, onUnmounted } from "vue";
-import WordleDisplay from "@/components/wordle/WordleDisplay.vue";
+import WordleCard from "@/components/wordle/WordleCard.vue";
 
 export default {
     name: "WordlePage",
     components: {
-        WordleDisplay,
+        WordleCard,
     },
     setup() {
         const wordleLetters = ref("");
@@ -80,7 +80,6 @@ export default {
                         // Simulate someone typing the letters
                         const revealedLength = 5 * (Math.floor(count / 2) + 1);
                         const guess = guesses[currentIndex.value].slice(revealedLength-5, revealedLength);
-                        console.log("simulating guess ", guess);
                         for (let i = 0; i < guess.length; i++) {
                             setTimeout(() => {
                                 wordleDisp.value.simulateKey(guess[i]);
