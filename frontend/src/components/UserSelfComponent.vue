@@ -28,17 +28,21 @@
         <v-row>
             <v-col cols="12" md="5" lg="3">
                 <v-card>
-                    <div class="d-flex flex-column pa-10">
-                        <v-hover v-slot="{ isHovering, props }">
-                            <v-img :src="getProfilePictureUrl(user.profile_picture)" width="128" height="128"
-                                v-bind="props" class="mx-auto">
-                                <div class="d-flex align-center justify-center fill-height fill-width">
+                    <v-card-text class="d-flex flex-column align-items-center pa-10">
+                        <v-hover v-slot:default="{ isHovering, props }">
+                            <v-badge class="d-flex justify-center custom-badge" location="bottom end" color="primary" offset-x="20" offset-y="20">
+                                <v-img :src="getProfilePictureUrl(user.profile_picture)" width="128" height="128"
+                                    v-bind="props">
                                     <v-btn icon @click="showImageDialog = true" v-if="isHovering" size="128"
-                                        style="opacity: 0.5;" color="primary">
+                                        style="opacity: 0.5;" color="primary"
+                                        class="d-flex align-center justify-center fill-height fill-width">
                                         <v-icon color="white" style="opacity: 1;">mdi-pencil</v-icon>
                                     </v-btn>
-                                </div>
-                            </v-img>
+                                </v-img>
+                                <template v-slot:badge>
+                                    <v-icon size="x-large">mdi-pencil</v-icon>
+                                </template>
+                            </v-badge>
                         </v-hover>
 
                         <div class="text-center mt-5">
@@ -47,7 +51,7 @@
                             </h3>
                             <p class="text-body-2">{{ user.about }}</p>
                         </div>
-                    </div>
+                    </v-card-text>
 
                     <v-divider></v-divider>
                     <div class="py-5 px-10">
@@ -108,7 +112,7 @@
                     </v-card-text>
                 </v-card>
                 <UserSessionCard />
-             </v-col>
+            </v-col>
         </v-row>
         <v-snackbar v-model="showSnackbar" :timeout="3000" color="success">
             {{ snackbarMessage }}
@@ -324,6 +328,12 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
-
+<style lang="scss">
+.custom-badge {
+    .v-badge__badge {
+        width: 30px;
+        height: 30px;
+        border-radius: 30px;
+    }
+}
 </style>
