@@ -58,6 +58,7 @@ class WordleSerializer(ActiveWordleSerializer):
     definition = serializers.SerializerMethodField(method_name="get_definition", read_only=True, required=False)
     daily_rank = serializers.IntegerField(read_only=True, required=False)
     word_rank = serializers.IntegerField(read_only=True, required=False)
+    rank = serializers.IntegerField(read_only=True, required=False)
 
     def get_definition(self, obj):
         # Check if the serializer is being used in a list context
@@ -74,6 +75,7 @@ class WordleSerializer(ActiveWordleSerializer):
             "definition",
             "daily_rank",
             "word_rank",
+            "rank",
         ]
 
 
@@ -89,6 +91,7 @@ class UserWordleSerializer(serializers.ModelSerializer):
     bronze_medals = serializers.IntegerField(read_only=True, required=False)
     total_medals = serializers.IntegerField(read_only=True, required=False)
     total_points = serializers.IntegerField(read_only=True, required=False)
+    rank = serializers.IntegerField(read_only=True, required=False)
 
     class Meta:
         model = User
@@ -105,6 +108,7 @@ class UserWordleSerializer(serializers.ModelSerializer):
             "bronze_medals",
             "total_medals",
             "total_points",
+            "rank",
         ]
         read_only_fields = [
             "display_name",
@@ -119,6 +123,7 @@ class UserWordleSerializer(serializers.ModelSerializer):
             "bronze_medals",
             "total_medals",
             "total_points",
+            "rank",
         ]
 
 

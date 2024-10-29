@@ -479,7 +479,21 @@ class WordlesToday(generics.ListAPIView):
     serializer_class = WordleSerializer
 
     def get_queryset(self):
-        queryset = Wordle.objects.filter(active=False, start_time__date=timezone.now().date()).order_by("-solved", "guesses", "time")
+        queryset = (
+            Wordle.objects.filter(active=False, start_time__date=timezone.now().date())
+            .order_by(F("solved").desc(), F("guesses").asc(), F("time").asc())
+            .annotate(
+                rank=Window(
+                    expression=RowNumber(),
+                    order_by=[
+                        F("solved").desc(),
+                        F("guesses").asc(),
+                        F("time").asc(),
+                        F("start_time").asc(),
+                    ],
+                )
+            )
+        )
         return queryset
 
 class WordleLeadersTime(APIView):
@@ -489,7 +503,12 @@ class WordleLeadersTime(APIView):
     def get(self, request):
         queryset = (
             User.objects.annotate(
-                avg_time=Avg("wordle__time"), total_wordles=Count("wordle")
+            avg_time=Avg("wordle__time", filter=Q(wordle__active=False, wordle__solved=True)),
+            total_wordles=Count("wordle", filter=Q(wordle__active=False)),
+            rank=Window(
+                expression=RowNumber(),
+                order_by=F("avg_time").asc()
+            )
             )
             .filter(total_wordles__gte=10)
             .order_by("avg_time")[:5]
@@ -505,8 +524,12 @@ class WordleLeadersGuesses(APIView):
     def get(self, request):
         queryset = (
             User.objects.annotate(
-            avg_guesses=Avg("wordle__guesses", filter=Q(wordle__active=False)),
-            total_wordles=Count("wordle", filter=Q(wordle__active=False))
+            avg_guesses=Avg("wordle__guesses", filter=Q(wordle__active=False, wordle__solved=True)),
+            total_wordles=Count("wordle", filter=Q(wordle__active=False)),
+            rank=Window(
+                expression=RowNumber(),
+                order_by=F("avg_guesses").asc()
+            )
             )
             .filter(total_wordles__gte=10)
             .order_by("avg_guesses")[:5]
@@ -568,6 +591,10 @@ class WordleLeadersMedal(APIView):
             + F("silver_medals") * 2
             + F("bronze_medals"),
         ).order_by("-gold_medals", "-total_points")[:5]
+
+        # Step 3: Add rank to the top 5 users
+        for rank, user in enumerate(user_medals, start=1):
+            user.rank = rank
 
         return Response(UserWordleSerializer(user_medals, many=True).data)
 
@@ -646,4 +673,9 @@ class WordWordleListView(generics.ListAPIView):
     def get_queryset(self):
         return Wordle.objects.filter(word=self.kwargs["word"], active=False).order_by(
             "-solved", "guesses", "time", "start_time"
+        ).annotate(
+            rank=Window(
+            expression=RowNumber(),
+            order_by=[F("solved").desc(), F("guesses").asc(), F("time").asc(), F("start_time").asc()]
+            )
         )

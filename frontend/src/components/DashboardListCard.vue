@@ -58,11 +58,11 @@
                             <!-- Check if a custom slot is defined for the column -->
                             <template v-if="header.key == 'rank'">
                                 <v-list-item-title>
-                                    <v-icon v-if="index + 1 <= 3 && (page.current_page == 1)"
-                                        :color="placeColors[index + 1]">
+                                    <v-icon v-if="item.rank <= 3"
+                                        :color="placeColors[item.rank]">
                                         mdi-star-circle
                                     </v-icon>
-                                    {{ (page.current_page - 1) * page.page_size + index + 1 }}
+                                    {{ item.rank}}
                                 </v-list-item-title>
                             </template>
                             <template v-if="header.key == 'user'">
