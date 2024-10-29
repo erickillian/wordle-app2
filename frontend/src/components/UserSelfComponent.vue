@@ -26,7 +26,7 @@
             </v-card>
         </v-dialog>
         <v-row>
-            <v-col cols="12" md="3">
+            <v-col cols="12" md="5" lg="3">
                 <v-card>
                     <div class="d-flex flex-column pa-10">
                         <v-hover v-slot="{ isHovering, props }">
@@ -61,7 +61,7 @@
                     </div>
                 </v-card>
             </v-col>
-            <v-col cols="12" md="9">
+            <v-col cols="12" md="7" lg="9">
                 <!-- Basic Information -->
                 <v-card class="mb-5">
                     <v-card-title class="py-4 font-weight-bold">

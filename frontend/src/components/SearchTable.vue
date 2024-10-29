@@ -12,7 +12,7 @@
                 :item-key="itemKey" dense class="elevation-0" :loading="loading" hover @click:row="selectItem"
                 hide-default-footer>
                 <template v-slot:item="{ item }">
-                    <tr :class="['data-table-row-search', { 'highlighted-row': selectedItem === item[itemKey] }]"
+                    <tr :class="['data-table-row-search', { 'highlighted-row-light': !isDarkTheme && selectedItem === item[itemKey], 'highlighted-row-dark': isDarkTheme && selectedItem === item[itemKey] } ]"
                         @click="() => selectItem(item)" v-ripple style="cursor: pointer;">
                         <td>{{ item[itemDisplayField] }}</td>
                     </tr>
@@ -37,6 +37,7 @@
 
 <script>
 import { defineComponent } from 'vue';
+import { useTheme } from 'vuetify';
 
 export default defineComponent({
     name: 'SearchTable',
@@ -98,6 +99,7 @@ export default defineComponent({
             const newItem = props.selectedItem === itemKey ? null : itemKey;
             emit('item-selected', newItem);
         };
+        const isDarkTheme = useTheme().current.value.dark;
 
         const onSearchInput = (event) => {
             emit('update:search-query', event.target.value); // Use the input's value, not the event object.
@@ -111,6 +113,7 @@ export default defineComponent({
             selectItem,
             onSearchInput,
             onPageUpdate,
+            isDarkTheme,
         };
     },
 });
@@ -121,13 +124,15 @@ export default defineComponent({
     transition: background-color 0.3s ease;
 }
 
-.highlighted-row {
+.highlighted-row-light {
     background-color: rgba(0, 0, 0, 0.1);
     /* Darken the row in light mode */
 }
 
-.v-theme--dark .highlighted-row {
+.highlighted-row-dark {
     background-color: rgba(255, 255, 255, 0.1);
     /* Lighten the row in dark mode */
 }
+
+
 </style>
