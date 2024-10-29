@@ -14,9 +14,9 @@
                         :elapsed-time="wordle.time" />
                 </v-col>
             </v-row>
-            <v-row v-if="wordle?.word">
+            <v-row v-if="wordle?.word && wordle?.definition">
                 <v-col>
-                    <WordDefinitionCard :wordle="wordle" />
+                    <WordDefinitionCard :word="wordle.word" :definition="wordle.definition" />
                 </v-col>
             </v-row>
             <v-row v-if="wordle?.word">

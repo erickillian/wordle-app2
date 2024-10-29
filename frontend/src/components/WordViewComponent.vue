@@ -31,6 +31,11 @@
                                 </v-list-item>
                             </v-col>
                         </v-row>
+                        <v-row>
+                            <v-col cols="12">
+                                <WordDefintionCard word="Definition:" :definition="word_definition" :elevation="0"  />
+                            </v-col>
+                        </v-row>
                     </v-container>
                 </v-card-text>
             </v-tabs-window-item>
@@ -83,12 +88,14 @@ import { word as wordInfo, wordWordles } from '@/api/wordle'
 import BarGraph from './graphs/BarGraph.vue';
 import { useTheme } from 'vuetify';
 import { guess } from '@/api/auth';
+import WordDefintionCard from '@/components/wordle/WordDefinitionCard.vue';
 
 export default defineComponent({
     name: 'WordViewViewComponent',
     components: {
         DashboardListCard,
         BarGraph,
+        WordDefintionCard,
     },
     props: {
         word: {
@@ -162,6 +169,7 @@ export default defineComponent({
         const word_wordles_page = ref(defaultPage);
         const word_guess_keys = ref([]);
         const word_guess_values = ref([]);
+        const word_definition = ref('');
 
         const getWordStats = async () => {
             loading.value = true;
@@ -171,6 +179,7 @@ export default defineComponent({
                 const guess_distrubution = response.data.guess_distribution;
                 word_guess_keys.value = Object.keys(guess_distrubution);
                 word_guess_values.value = Object.values(guess_distrubution);
+                word_definition.value = response.data.definition;
             } catch (error) {
             } finally {
                 loading.value = false;
@@ -206,6 +215,7 @@ export default defineComponent({
             word_wordles,
             word_wordles_loading,
             word_wordles_page,
+            word_definition,
             getWordWordles,
             word_guess_keys,
             word_guess_values,
