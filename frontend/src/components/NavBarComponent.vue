@@ -16,7 +16,7 @@
                     <v-menu v-model="menuVisible" offset-y :close-on-content-click="false"
                         @click-outside="menuVisible = false">
                         <template v-slot:activator="{ props: activatorProps }">
-                            <v-btn icon v-bind="activatorProps" @mouseenter="menuVisible = true">
+                            <v-btn icon v-bind="activatorProps">
                                 <v-img v-if="user?.profile_picture" :src="getProfilePictureUrl(user.profile_picture)"
                                     alt="Profile Picture" width="46" height="46" />
                             </v-btn>

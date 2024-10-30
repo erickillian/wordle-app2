@@ -192,6 +192,8 @@ export default {
     color: #b0bec5;
     text-align: center;
     margin: 20px;
+    padding: 10px; /* Add padding to ensure message is not cut off */
+    white-space: normal; /* Allow words to wrap to the next line */
 }
 
 .play-btn {
